@@ -43,26 +43,37 @@ void Game::generateRooms()
 	rooms[generateRandomNumber(0, ROOMS_SIZE_X-1)][generateRandomNumber(0, ROOMS_SIZE_Y-1)] = new TreasureRoom();
 }
 
+void Game::setDetails(std::string name, std::string description)
+{
+	player.setName(name);
+	player.setDescription(description);
+}
+
+Player& Game::getPlayer()
+{
+	return player;
+}
+
 void Game::initialise()
 {
 	std::string name, description;
 
-	std::cout << "Welcome!\n" << std::endl;
+	//std::cout << "Welcome!\n" << std::endl;
 
-	std::cout << "Please enter your name: ";
-	getline(std::cin, name);
+	//std::cout << "Please enter your name: ";
+	//getline(std::cin, name);
 
 	name[0] = toupper(name[0]);
 
 	if (name.size() != 0)
 		player.setName(name);
 		
-	std::cout << "Please enter a description: ";
-	getline(std::cin, description);
+	//std::cout << "Please enter a description: ";
+	//getline(std::cin, description);
 	
 	player.setDescription(description);
 
-	std::cout << "============================================" << std::endl;
+	//std::cout << "============================================" << std::endl;
 }
 
 void Game::loseEnding()
@@ -81,8 +92,6 @@ void Game::winEnding()
 
 void Game::play()
 {
-	initialise();
-
 	createLogs();
 
 	int currentX = generateRandomNumber(0, ROOMS_SIZE_X-1),

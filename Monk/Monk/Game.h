@@ -33,6 +33,8 @@ class Game
 		Game();
 		void play();
 		void printDungeon();
+		void setDetails(std::string name, std::string description);
+		Player& getPlayer();
 };
 
 #endif
