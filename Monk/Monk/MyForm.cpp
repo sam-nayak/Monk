@@ -9,5 +9,6 @@ int main(array < String^ > ^ args) {
 	Application::SetCompatibleTextRenderingDefault(false);
 	Monk::MyForm form;
 	Application::Run(%form);
+
 	return 0;
 }
