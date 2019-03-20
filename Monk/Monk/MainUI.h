@@ -13,6 +13,8 @@
 #include "Monster.h"
 #include "MonsterRoom.h"
 #include "TreasureRoom.h"
+#include "BattleUI.h"
+#include "SettingsUI.h"
 
 namespace Monk {
 
@@ -128,6 +130,7 @@ namespace Monk {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainUI::typeid));
 			this->titleMusic = (gcnew System::Media::SoundPlayer());
 			this->panelScreenTitle = (gcnew System::Windows::Forms::Panel());
 			this->buttonSettings1 = (gcnew System::Windows::Forms::Button());
@@ -152,10 +155,10 @@ namespace Monk {
 			this->textBoxHP = (gcnew System::Windows::Forms::TextBox());
 			this->buttonMenu = (gcnew System::Windows::Forms::Button());
 			this->panelControls = (gcnew System::Windows::Forms::Panel());
-			this->buttonSouth = (gcnew System::Windows::Forms::Button());
-			this->buttonNorth = (gcnew System::Windows::Forms::Button());
-			this->buttonEast = (gcnew System::Windows::Forms::Button());
 			this->buttonWest = (gcnew System::Windows::Forms::Button());
+			this->buttonEast = (gcnew System::Windows::Forms::Button());
+			this->buttonNorth = (gcnew System::Windows::Forms::Button());
+			this->buttonSouth = (gcnew System::Windows::Forms::Button());
 			this->panelScreenTitle->SuspendLayout();
 			this->panelScreenGameSetup->SuspendLayout();
 			this->panelScreenGame->SuspendLayout();
@@ -486,45 +489,25 @@ namespace Monk {
 			this->panelControls->Size = System::Drawing::Size(266, 284);
 			this->panelControls->TabIndex = 1;
 			// 
-			// buttonSouth
+			// buttonWest
 			// 
-			this->buttonSouth->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonSouth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonSouth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonSouth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSouth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSouth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonSouth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->buttonWest->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonWest->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonWest->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonWest->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonWest->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonWest->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonWest->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->buttonSouth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+			this->buttonWest->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
 				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonSouth->Location = System::Drawing::Point(84, 145);
-			this->buttonSouth->Name = L"buttonSouth";
-			this->buttonSouth->Size = System::Drawing::Size(83, 30);
-			this->buttonSouth->TabIndex = 7;
-			this->buttonSouth->Text = L"South";
-			this->buttonSouth->UseVisualStyleBackColor = false;
-			this->buttonSouth->Click += gcnew System::EventHandler(this, &MainUI::buttonSouth_Click);
-			// 
-			// buttonNorth
-			// 
-			this->buttonNorth->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonNorth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonNorth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonNorth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonNorth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonNorth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonNorth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->buttonNorth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
-				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonNorth->Location = System::Drawing::Point(84, 66);
-			this->buttonNorth->Name = L"buttonNorth";
-			this->buttonNorth->Size = System::Drawing::Size(83, 30);
-			this->buttonNorth->TabIndex = 8;
-			this->buttonNorth->Text = L"North";
-			this->buttonNorth->UseVisualStyleBackColor = false;
-			this->buttonNorth->Click += gcnew System::EventHandler(this, &MainUI::buttonNorth_Click);
+			this->buttonWest->Location = System::Drawing::Point(3, 102);
+			this->buttonWest->Name = L"buttonWest";
+			this->buttonWest->Size = System::Drawing::Size(83, 30);
+			this->buttonWest->TabIndex = 10;
+			this->buttonWest->Text = L"West";
+			this->buttonWest->UseVisualStyleBackColor = false;
+			this->buttonWest->Click += gcnew System::EventHandler(this, &MainUI::buttonWest_Click);
 			// 
 			// buttonEast
 			// 
@@ -546,25 +529,45 @@ namespace Monk {
 			this->buttonEast->UseVisualStyleBackColor = false;
 			this->buttonEast->Click += gcnew System::EventHandler(this, &MainUI::buttonEast_Click);
 			// 
-			// buttonWest
+			// buttonNorth
 			// 
-			this->buttonWest->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonWest->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonWest->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonWest->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonWest->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonWest->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonWest->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->buttonNorth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonNorth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonNorth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonNorth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonNorth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->buttonWest->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+			this->buttonNorth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
 				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonWest->Location = System::Drawing::Point(3, 102);
-			this->buttonWest->Name = L"buttonWest";
-			this->buttonWest->Size = System::Drawing::Size(83, 30);
-			this->buttonWest->TabIndex = 10;
-			this->buttonWest->Text = L"West";
-			this->buttonWest->UseVisualStyleBackColor = false;
-			this->buttonWest->Click += gcnew System::EventHandler(this, &MainUI::buttonWest_Click);
+			this->buttonNorth->Location = System::Drawing::Point(84, 66);
+			this->buttonNorth->Name = L"buttonNorth";
+			this->buttonNorth->Size = System::Drawing::Size(83, 30);
+			this->buttonNorth->TabIndex = 8;
+			this->buttonNorth->Text = L"North";
+			this->buttonNorth->UseVisualStyleBackColor = false;
+			this->buttonNorth->Click += gcnew System::EventHandler(this, &MainUI::buttonNorth_Click);
+			// 
+			// buttonSouth
+			// 
+			this->buttonSouth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonSouth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonSouth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonSouth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonSouth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonSouth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonSouth->Location = System::Drawing::Point(84, 145);
+			this->buttonSouth->Name = L"buttonSouth";
+			this->buttonSouth->Size = System::Drawing::Size(83, 30);
+			this->buttonSouth->TabIndex = 7;
+			this->buttonSouth->Text = L"South";
+			this->buttonSouth->UseVisualStyleBackColor = false;
+			this->buttonSouth->Click += gcnew System::EventHandler(this, &MainUI::buttonSouth_Click);
 			// 
 			// MainUI
 			// 
@@ -577,6 +580,7 @@ namespace Monk {
 			this->Controls->Add(this->panelScreenTitle);
 			this->Controls->Add(this->panelScreenGameSetup);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximumSize = System::Drawing::Size(748, 473);
 			this->MinimumSize = System::Drawing::Size(748, 473);
 			this->Name = L"MainUI";
@@ -831,6 +835,9 @@ namespace Monk {
 			file.close();
 
 			//currentRoom->enter(player);
+			BattleUI^ battle = gcnew BattleUI(this);
+			this->Hide();
+			battle->ShowDialog();
 
 			printDungeon();
 
@@ -865,7 +872,8 @@ namespace Monk {
 	}
 
 	private: System::Void buttonSettings1_Click(System::Object^  sender, System::EventArgs^  e) {
-		stopTitleMusic();
+		SettingsUI^ settings = gcnew SettingsUI();
+		settings->Show();
 	}
 
 	private: System::Void buttonStartGame_Click(System::Object^  sender, System::EventArgs^  e) {

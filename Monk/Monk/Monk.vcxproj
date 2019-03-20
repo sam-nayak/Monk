@@ -144,6 +144,9 @@
     <ClInclude Include="MonsterRoom.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="SettingsUI.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="TreasureRoom.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +160,7 @@
     <ClCompile Include="MonsterRoom.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="SettingsUI.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TreasureRoom.cpp" />
   </ItemGroup>
@@ -176,6 +180,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainUI.resx">
       <DependentUpon>MainUI.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsUI.resx">
+      <DependentUpon>SettingsUI.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

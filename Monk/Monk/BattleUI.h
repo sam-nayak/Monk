@@ -68,6 +68,7 @@ namespace Monk {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(BattleUI::typeid));
 			this->buttonDefend = (gcnew System::Windows::Forms::Button());
 			this->buttonAttack = (gcnew System::Windows::Forms::Button());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -176,6 +177,7 @@ namespace Monk {
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->lbo_BattleLog);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximumSize = System::Drawing::Size(748, 473);
 			this->MinimumSize = System::Drawing::Size(748, 473);
 			this->Name = L"BattleUI";
