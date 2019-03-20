@@ -2,7 +2,10 @@
 #include <iostream>
 #include <msclr\marshal_cppstd.h>
 
-#include "Game.h"
+#include "Battle.h"
+#include "Monster.h"
+#include "Constants.h"
+#include "Functions.h"
 
 namespace Monk {
 
@@ -17,13 +20,13 @@ namespace Monk {
 
 
 	/// <summary>
-	/// Summary for MyForm
+	/// Summary for MainUI
 	/// </summary>
-	public ref class MyForm : public System::Windows::Forms::Form
+	public ref class MainUI : public System::Windows::Forms::Form
 	{
 
 	public:
-		MyForm(void)
+		MainUI(void)
 		{
 			InitializeComponent();
 
@@ -33,7 +36,7 @@ namespace Monk {
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~MyForm()
+		~MainUI()
 		{
 			if (components)
 			{
@@ -44,7 +47,7 @@ namespace Monk {
 
 
 	protected:
-		
+
 
 
 	private: System::Media::SoundPlayer^ titleMusic;
@@ -71,19 +74,26 @@ namespace Monk {
 
 	private: System::Windows::Forms::TextBox^  textBoxAP;
 	private: System::Windows::Forms::TextBox^  textBoxHP;
-	private: System::Windows::Forms::Button^  buttonSettings2;
-	private: System::Windows::Forms::Panel^  panelBattleLog;
+	private: System::Windows::Forms::Button^  buttonMenu;
+
+
+	private: System::Windows::Forms::Panel^  panelControls;
+
 	private: System::Windows::Forms::RichTextBox^  textBoxBattleLog;
-	private: System::Windows::Forms::Panel^  panelGraphics;
+
 	private: System::Windows::Forms::TextBox^  textBoxDescription;
 	private: System::Windows::Forms::TextBox^  textBoxGameName;
 	private: System::Windows::Forms::TextBox^  textBoxGameNameCurrent;
 	private: System::Windows::Forms::Label^  labelHPOutOf;
+	private: System::Windows::Forms::Button^  buttonWest;
+	private: System::Windows::Forms::Button^  buttonEast;
+	private: System::Windows::Forms::Button^  buttonNorth;
+	private: System::Windows::Forms::Button^  buttonSouth;
 
 
 
 
-	
+
 	protected:
 
 	protected:
@@ -102,7 +112,6 @@ namespace Monk {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm::typeid));
 			this->titleMusic = (gcnew System::Media::SoundPlayer());
 			this->panelScreenTitle = (gcnew System::Windows::Forms::Panel());
 			this->buttonSettings1 = (gcnew System::Windows::Forms::Button());
@@ -115,7 +124,9 @@ namespace Monk {
 			this->buttonStartGame = (gcnew System::Windows::Forms::Button());
 			this->labelName = (gcnew System::Windows::Forms::Label());
 			this->panelScreenGame = (gcnew System::Windows::Forms::Panel());
+			this->textBoxBattleLog = (gcnew System::Windows::Forms::RichTextBox());
 			this->panelStats = (gcnew System::Windows::Forms::Panel());
+			this->labelHPOutOf = (gcnew System::Windows::Forms::Label());
 			this->textBoxGameNameCurrent = (gcnew System::Windows::Forms::TextBox());
 			this->textBoxGameName = (gcnew System::Windows::Forms::TextBox());
 			this->textBoxHPMax = (gcnew System::Windows::Forms::TextBox());
@@ -123,16 +134,17 @@ namespace Monk {
 			this->textBoxHPCurrent = (gcnew System::Windows::Forms::TextBox());
 			this->textBoxAP = (gcnew System::Windows::Forms::TextBox());
 			this->textBoxHP = (gcnew System::Windows::Forms::TextBox());
-			this->buttonSettings2 = (gcnew System::Windows::Forms::Button());
-			this->panelBattleLog = (gcnew System::Windows::Forms::Panel());
-			this->textBoxBattleLog = (gcnew System::Windows::Forms::RichTextBox());
-			this->panelGraphics = (gcnew System::Windows::Forms::Panel());
-			this->labelHPOutOf = (gcnew System::Windows::Forms::Label());
+			this->buttonMenu = (gcnew System::Windows::Forms::Button());
+			this->panelControls = (gcnew System::Windows::Forms::Panel());
+			this->buttonSouth = (gcnew System::Windows::Forms::Button());
+			this->buttonNorth = (gcnew System::Windows::Forms::Button());
+			this->buttonEast = (gcnew System::Windows::Forms::Button());
+			this->buttonWest = (gcnew System::Windows::Forms::Button());
 			this->panelScreenTitle->SuspendLayout();
 			this->panelScreenGameSetup->SuspendLayout();
 			this->panelScreenGame->SuspendLayout();
 			this->panelStats->SuspendLayout();
-			this->panelBattleLog->SuspendLayout();
+			this->panelControls->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// titleMusic
@@ -169,7 +181,7 @@ namespace Monk {
 			this->buttonSettings1->TabIndex = 5;
 			this->buttonSettings1->Text = L"Settings";
 			this->buttonSettings1->UseVisualStyleBackColor = false;
-			this->buttonSettings1->Click += gcnew System::EventHandler(this, &MyForm::buttonSettings1_Click);
+			this->buttonSettings1->Click += gcnew System::EventHandler(this, &MainUI::buttonSettings1_Click);
 			// 
 			// buttonNewGame
 			// 
@@ -189,7 +201,7 @@ namespace Monk {
 			this->buttonNewGame->TabIndex = 4;
 			this->buttonNewGame->Text = L"New Game";
 			this->buttonNewGame->UseVisualStyleBackColor = false;
-			this->buttonNewGame->Click += gcnew System::EventHandler(this, &MyForm::buttonNewGame_Click);
+			this->buttonNewGame->Click += gcnew System::EventHandler(this, &MainUI::buttonNewGame_Click);
 			// 
 			// labelTitle
 			// 
@@ -272,7 +284,7 @@ namespace Monk {
 			this->buttonStartGame->TabIndex = 5;
 			this->buttonStartGame->Text = L"Start Game";
 			this->buttonStartGame->UseVisualStyleBackColor = false;
-			this->buttonStartGame->Click += gcnew System::EventHandler(this, &MyForm::buttonStartGame_Click);
+			this->buttonStartGame->Click += gcnew System::EventHandler(this, &MainUI::buttonStartGame_Click);
 			// 
 			// labelName
 			// 
@@ -287,15 +299,26 @@ namespace Monk {
 			// 
 			// panelScreenGame
 			// 
+			this->panelScreenGame->Controls->Add(this->textBoxBattleLog);
 			this->panelScreenGame->Controls->Add(this->panelStats);
-			this->panelScreenGame->Controls->Add(this->panelBattleLog);
-			this->panelScreenGame->Controls->Add(this->panelGraphics);
+			this->panelScreenGame->Controls->Add(this->panelControls);
 			this->panelScreenGame->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panelScreenGame->Location = System::Drawing::Point(0, 0);
 			this->panelScreenGame->Name = L"panelScreenGame";
 			this->panelScreenGame->Size = System::Drawing::Size(732, 435);
 			this->panelScreenGame->TabIndex = 11;
 			this->panelScreenGame->Visible = false;
+			// 
+			// textBoxBattleLog
+			// 
+			this->textBoxBattleLog->BackColor = System::Drawing::Color::DarkOrchid;
+			this->textBoxBattleLog->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->textBoxBattleLog->Location = System::Drawing::Point(279, 9);
+			this->textBoxBattleLog->Name = L"textBoxBattleLog";
+			this->textBoxBattleLog->ReadOnly = true;
+			this->textBoxBattleLog->Size = System::Drawing::Size(441, 414);
+			this->textBoxBattleLog->TabIndex = 0;
+			this->textBoxBattleLog->Text = L"";
 			// 
 			// panelStats
 			// 
@@ -307,11 +330,20 @@ namespace Monk {
 			this->panelStats->Controls->Add(this->textBoxHPCurrent);
 			this->panelStats->Controls->Add(this->textBoxAP);
 			this->panelStats->Controls->Add(this->textBoxHP);
-			this->panelStats->Controls->Add(this->buttonSettings2);
+			this->panelStats->Controls->Add(this->buttonMenu);
 			this->panelStats->Location = System::Drawing::Point(3, 290);
 			this->panelStats->Name = L"panelStats";
 			this->panelStats->Size = System::Drawing::Size(266, 142);
 			this->panelStats->TabIndex = 2;
+			// 
+			// labelHPOutOf
+			// 
+			this->labelHPOutOf->AutoSize = true;
+			this->labelHPOutOf->Location = System::Drawing::Point(111, 57);
+			this->labelHPOutOf->Name = L"labelHPOutOf";
+			this->labelHPOutOf->Size = System::Drawing::Size(12, 13);
+			this->labelHPOutOf->TabIndex = 16;
+			this->labelHPOutOf->Text = L"/";
 			// 
 			// textBoxGameNameCurrent
 			// 
@@ -407,62 +439,118 @@ namespace Monk {
 			this->textBoxHP->Text = L"HP";
 			this->textBoxHP->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
-			// buttonSettings2
+			// buttonMenu
 			// 
-			this->buttonSettings2->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonSettings2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonSettings2->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonSettings2->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSettings2->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSettings2->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonSettings2->Font = (gcnew System::Drawing::Font(L"Maiandra GD", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->buttonMenu->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonMenu->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonMenu->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonMenu->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonMenu->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonMenu->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonMenu->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->buttonSettings2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+			this->buttonMenu->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
 				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonSettings2->Location = System::Drawing::Point(9, 106);
-			this->buttonSettings2->Name = L"buttonSettings2";
-			this->buttonSettings2->Size = System::Drawing::Size(76, 30);
-			this->buttonSettings2->TabIndex = 6;
-			this->buttonSettings2->Text = L"Settings";
-			this->buttonSettings2->UseVisualStyleBackColor = false;
-			this->buttonSettings2->Click += gcnew System::EventHandler(this, &MyForm::buttonSettings2_Click);
+			this->buttonMenu->Location = System::Drawing::Point(9, 106);
+			this->buttonMenu->Name = L"buttonMenu";
+			this->buttonMenu->Size = System::Drawing::Size(69, 30);
+			this->buttonMenu->TabIndex = 6;
+			this->buttonMenu->Text = L"Menu";
+			this->buttonMenu->UseVisualStyleBackColor = false;
+			this->buttonMenu->Click += gcnew System::EventHandler(this, &MainUI::buttonSettings2_Click);
 			// 
-			// panelBattleLog
+			// panelControls
 			// 
-			this->panelBattleLog->Controls->Add(this->textBoxBattleLog);
-			this->panelBattleLog->Location = System::Drawing::Point(3, 3);
-			this->panelBattleLog->Name = L"panelBattleLog";
-			this->panelBattleLog->Size = System::Drawing::Size(266, 284);
-			this->panelBattleLog->TabIndex = 1;
+			this->panelControls->Controls->Add(this->buttonWest);
+			this->panelControls->Controls->Add(this->buttonEast);
+			this->panelControls->Controls->Add(this->buttonNorth);
+			this->panelControls->Controls->Add(this->buttonSouth);
+			this->panelControls->Location = System::Drawing::Point(3, 3);
+			this->panelControls->Name = L"panelControls";
+			this->panelControls->Size = System::Drawing::Size(266, 284);
+			this->panelControls->TabIndex = 1;
 			// 
-			// textBoxBattleLog
+			// buttonSouth
 			// 
-			this->textBoxBattleLog->BackColor = System::Drawing::Color::DarkOrchid;
-			this->textBoxBattleLog->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->textBoxBattleLog->Location = System::Drawing::Point(3, 3);
-			this->textBoxBattleLog->Name = L"textBoxBattleLog";
-			this->textBoxBattleLog->ReadOnly = true;
-			this->textBoxBattleLog->Size = System::Drawing::Size(260, 278);
-			this->textBoxBattleLog->TabIndex = 0;
-			this->textBoxBattleLog->Text = L"";
+			this->buttonSouth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonSouth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonSouth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonSouth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonSouth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonSouth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonSouth->Location = System::Drawing::Point(84, 145);
+			this->buttonSouth->Name = L"buttonSouth";
+			this->buttonSouth->Size = System::Drawing::Size(83, 30);
+			this->buttonSouth->TabIndex = 7;
+			this->buttonSouth->Text = L"South";
+			this->buttonSouth->UseVisualStyleBackColor = false;
+			this->buttonSouth->Click += gcnew System::EventHandler(this, &MainUI::buttonSouth_Click);
 			// 
-			// panelGraphics
+			// buttonNorth
 			// 
-			this->panelGraphics->Location = System::Drawing::Point(275, 3);
-			this->panelGraphics->Name = L"panelGraphics";
-			this->panelGraphics->Size = System::Drawing::Size(454, 429);
-			this->panelGraphics->TabIndex = 0;
+			this->buttonNorth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonNorth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonNorth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonNorth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonNorth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonNorth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonNorth->Location = System::Drawing::Point(84, 66);
+			this->buttonNorth->Name = L"buttonNorth";
+			this->buttonNorth->Size = System::Drawing::Size(83, 30);
+			this->buttonNorth->TabIndex = 8;
+			this->buttonNorth->Text = L"North";
+			this->buttonNorth->UseVisualStyleBackColor = false;
+			this->buttonNorth->Click += gcnew System::EventHandler(this, &MainUI::buttonNorth_Click);
 			// 
-			// labelHPOutOf
+			// buttonEast
 			// 
-			this->labelHPOutOf->AutoSize = true;
-			this->labelHPOutOf->Location = System::Drawing::Point(111, 57);
-			this->labelHPOutOf->Name = L"labelHPOutOf";
-			this->labelHPOutOf->Size = System::Drawing::Size(12, 13);
-			this->labelHPOutOf->TabIndex = 16;
-			this->labelHPOutOf->Text = L"/";
+			this->buttonEast->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonEast->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonEast->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonEast->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonEast->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonEast->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonEast->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonEast->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonEast->Location = System::Drawing::Point(163, 102);
+			this->buttonEast->Name = L"buttonEast";
+			this->buttonEast->Size = System::Drawing::Size(83, 30);
+			this->buttonEast->TabIndex = 9;
+			this->buttonEast->Text = L"East";
+			this->buttonEast->UseVisualStyleBackColor = false;
+			this->buttonEast->Click += gcnew System::EventHandler(this, &MainUI::buttonEast_Click);
 			// 
-			// MyForm
+			// buttonWest
+			// 
+			this->buttonWest->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonWest->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonWest->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonWest->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonWest->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonWest->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonWest->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonWest->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonWest->Location = System::Drawing::Point(3, 102);
+			this->buttonWest->Name = L"buttonWest";
+			this->buttonWest->Size = System::Drawing::Size(83, 30);
+			this->buttonWest->TabIndex = 10;
+			this->buttonWest->Text = L"West";
+			this->buttonWest->UseVisualStyleBackColor = false;
+			this->buttonWest->Click += gcnew System::EventHandler(this, &MainUI::buttonWest_Click);
+			// 
+			// MainUI
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -473,13 +561,12 @@ namespace Monk {
 			this->Controls->Add(this->panelScreenTitle);
 			this->Controls->Add(this->panelScreenGameSetup);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
-			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximumSize = System::Drawing::Size(748, 473);
 			this->MinimumSize = System::Drawing::Size(748, 473);
-			this->Name = L"MyForm";
+			this->Name = L"MainUI";
 			this->Text = L"Monk";
 			this->TransparencyKey = System::Drawing::Color::Purple;
-			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
+			this->Load += gcnew System::EventHandler(this, &MainUI::MainUI_Load);
 			this->panelScreenTitle->ResumeLayout(false);
 			this->panelScreenTitle->PerformLayout();
 			this->panelScreenGameSetup->ResumeLayout(false);
@@ -487,7 +574,7 @@ namespace Monk {
 			this->panelScreenGame->ResumeLayout(false);
 			this->panelStats->ResumeLayout(false);
 			this->panelStats->PerformLayout();
-			this->panelBattleLog->ResumeLayout(false);
+			this->panelControls->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -502,7 +589,7 @@ namespace Monk {
 
 			System::String^ nameTextBox = textBoxName->Text;
 			System::String^ descriptionTextBox = textBoxDescription->Text;
-						
+
 			name = msclr::interop::marshal_as<std::string>(nameTextBox);
 			name[0] = toupper(name[0]);
 
@@ -523,7 +610,7 @@ namespace Monk {
 			textBoxHPMax->Text = Convert::ToString(game.getPlayer().getHealthPointsMax());
 
 			textBoxAPCurrent->Text = Convert::ToString(game.getPlayer().getAttackPoints());
-			
+
 			textBoxGameNameCurrent->Text = gcnew String((game.getPlayer().getName()).c_str());
 		}
 
@@ -552,7 +639,22 @@ namespace Monk {
 			}
 		}
 
-		
+		void print(char input)
+		{
+
+		}
+
+		void print(std::string input)
+		{
+
+		}
+
+		void moveCharacter(std::string direction)
+		{
+
+		}
+
+
 
 #pragma endregion
 
@@ -572,25 +674,28 @@ namespace Monk {
 
 		startGame();
 
-		//this->panelScreenGame->Visible = true;
-
-		////this->panelScreenGameSetup->Hide();
-		//this->panelScreenGame->Show();
-		//this->panelScreenGameSetup->Hide();
-		//this->panelScreenGame->BringToFront();
-		
 	}
-	
-	private: System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e) {
+
+	private: System::Void MainUI_Load(System::Object^  sender, System::EventArgs^  e) {
 		startTitleMusic();
 	}
 	private: System::Void buttonSettings2_Click(System::Object^  sender, System::EventArgs^  e) {
 		startTitleMusic();
 
-		//this->panelScreenGame->Hide();
 		this->panelScreenTitle->Show();
-		//this->panelScreenGameSetup->Hide();
 		this->panelScreenTitle->BringToFront();
 	}
+	private: System::Void buttonNorth_Click(System::Object^  sender, System::EventArgs^  e) {
+		moveCharacter("w");
+	}
+private: System::Void buttonEast_Click(System::Object^  sender, System::EventArgs^  e) {
+	moveCharacter("d");
+}
+private: System::Void buttonSouth_Click(System::Object^  sender, System::EventArgs^  e) {
+	moveCharacter("s");
+}
+private: System::Void buttonWest_Click(System::Object^  sender, System::EventArgs^  e) {
+	moveCharacter("a");
+}
 };
 }

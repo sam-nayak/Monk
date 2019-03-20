@@ -1,4 +1,4 @@
-#include "MyForm.h"
+#include "MainUI.h"
 #include <ctime>
 
 using namespace System;
@@ -33,13 +33,13 @@ DONE:
 */
 
 [STAThreadAttribute]
-int main(array < String^ > ^ args) 
+int main(array < String^ > ^ args)
 {
 	std::srand(unsigned(std::time(NULL)));
 
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
-	Monk::MyForm form;
+	Monk::MainUI form;
 	Application::Run(%form);
 
 	return 0;
