@@ -41,6 +41,6 @@ const int DEFAULT_PLAYER_ATTACK = 3;
 const int DEFAULT_MONSTER_HEALTH = 10;
 const int DEFAULT_MONSTER_ATTACK = 2;
 
-const std::string LOGS_PATHWAY = "files/logs.txt";
+const std::string LOGS_PATHWAY = "Resources\\logs.txt";
 
 #endif

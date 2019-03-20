@@ -129,6 +129,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Battle.h" />
+    <ClInclude Include="BattleUI.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="EmptyRoom.h" />
@@ -136,15 +139,14 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterRoom.h" />
-    <ClInclude Include="MyForm.h">
-      <FileType>CppForm</FileType>
-    </ClInclude>
+    <ClInclude Include="MyForm.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="TreasureRoom.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="BattleUI.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="EmptyRoom.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -167,9 +169,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MyForm.resx">
-      <DependentUpon>MyForm.h</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="BattleUI.resx">
+      <DependentUpon>BattleUI.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

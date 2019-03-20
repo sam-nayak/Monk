@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "Functions.h"
 
+
 Game::Game()
 {
 	generateRooms();
@@ -199,6 +200,7 @@ void Game::printDungeon()
 	for (size_t i = 0; i < rooms.size(); i++)
 	{
 		std::cout << "[";
+		
 
 		for (size_t j = 0; j < rooms[i].size(); j++)
 		{

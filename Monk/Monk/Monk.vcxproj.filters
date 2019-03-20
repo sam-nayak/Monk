@@ -48,6 +48,9 @@
     <ClInclude Include="Character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BattleUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="MyForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,6 +89,9 @@
     <ClCompile Include="MyForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BattleUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Media Include="F:\School\University\Year 2\Object-Oriented Systems Development\Part 2\Monk\Monk\Resources\RPG_Title_1.wav">
@@ -94,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MyForm.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BattleUI.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "Battle.h"
 #include "Functions.h"
 #include "Constants.h"
+#include "BattleUI.h"
 
 MonsterRoom::MonsterRoom()
 	: Room(DEFAULT_MONSTERROOM_NAME)
@@ -23,6 +24,7 @@ void MonsterRoom::enter(Player &player)
 	if (monster.isAlive())
 	{
 		Battle(player, monster);
+		//BattleUI battle = new BattleUI();
 	}
 	else
 	{
