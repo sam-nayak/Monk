@@ -617,6 +617,9 @@ namespace Monk {
 				stopTitleMusic();
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
+
+				setDetails();
+				startGame();
 			}
 		}
 
@@ -691,8 +694,6 @@ namespace Monk {
 			player.setDescription(description);
 		}
 
-
-
 		void loseEnding()
 		{
 			print("\n\n============================================\n");
@@ -711,8 +712,8 @@ namespace Monk {
 		{
 			createLogs();
 
-			int currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1),
-				currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
+			currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1);
+			currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
 
 			while (rooms[currentX][currentY]->getName() != DEFAULT_EMPTYROOM_NAME)
 			{
@@ -745,7 +746,6 @@ namespace Monk {
 			{
 				print("[\t");
 
-
 				for (size_t j = 0; j < rooms[i].size(); j++)
 				{
 					Room *room = rooms[i][j];
@@ -755,7 +755,8 @@ namespace Monk {
 						: room->hasVisited()
 						? room->getName()[0] : '-';
 
-					print(letter + '\t');
+					print(letter);
+					print("\t");
 
 					if (j != rooms.size() - 1)
 						print(" ");
@@ -777,6 +778,7 @@ namespace Monk {
 		{
 			System::String^ text = gcnew String(input.c_str());
 			this->textBoxBattleLog->AppendText(text);
+			this->textBoxBattleLog->ScrollToCaret();
 		}
 
 		void moveCharacter(std::string direction)
@@ -848,7 +850,6 @@ namespace Monk {
 		void startGame()
 		{
 			generateRooms();
-			printDungeon();
 			play();
 		}
 
@@ -868,8 +869,7 @@ namespace Monk {
 	}
 
 	private: System::Void buttonStartGame_Click(System::Object^  sender, System::EventArgs^  e) {
-		startGame();
-
+		checkDetails();
 	}
 
 	private: System::Void MainUI_Load(System::Object^  sender, System::EventArgs^  e) {
