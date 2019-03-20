@@ -1,5 +1,15 @@
 #pragma once
 
+#include <string>
+#include <fstream>
+#include <iostream>
+
+#include "Functions.h"
+#include "Constants.h"
+#include "Room.h"
+#include "Monster.h"
+#include "Player.h"
+
 namespace Monk {
 
 	using namespace System;
@@ -9,6 +19,10 @@ namespace Monk {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
+	Player &player;
+	Monster &monster;
+	std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
+
 
 	/// <summary>
 	/// Summary for BattleUI
@@ -17,10 +31,15 @@ namespace Monk {
 	{
 
 	public:
-		BattleUI(System::Windows::Forms::Form^ menu)
+		BattleUI(System::Windows::Forms::Form^ menu, Player p, Monster m)
 		{
 			otherform = menu;
+			player = player;
+			monster = m;
 			InitializeComponent();
+
+			if (monster.isAlive() && player.isAlive())
+				start();
 		}
 
 	protected:
@@ -37,12 +56,18 @@ namespace Monk {
 	private: System::Windows::Forms::Button^  buttonDefend;
 	protected:
 	private: System::Windows::Forms::Button^  buttonAttack;
-	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::Label^  labelPlayerHP;
+
 	private: System::Windows::Forms::TextBox^  txt_EnemyHP;
 	private: System::Windows::Forms::TextBox^  txt_PlayerHP;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::ListBox^  lbo_BattleLog;
+	private: System::Windows::Forms::Label^  labelBattleLog;
+
+
 	private: System::Windows::Forms::Form ^ otherform;
+	private: System::Windows::Forms::Label^  labelMonsterHP;
+	private: System::Windows::Forms::RichTextBox^  richTextBoxBattleLog;
+
+
 
 
 
@@ -71,11 +96,12 @@ namespace Monk {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(BattleUI::typeid));
 			this->buttonDefend = (gcnew System::Windows::Forms::Button());
 			this->buttonAttack = (gcnew System::Windows::Forms::Button());
-			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->labelPlayerHP = (gcnew System::Windows::Forms::Label());
 			this->txt_EnemyHP = (gcnew System::Windows::Forms::TextBox());
 			this->txt_PlayerHP = (gcnew System::Windows::Forms::TextBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->lbo_BattleLog = (gcnew System::Windows::Forms::ListBox());
+			this->labelBattleLog = (gcnew System::Windows::Forms::Label());
+			this->labelMonsterHP = (gcnew System::Windows::Forms::Label());
+			this->richTextBoxBattleLog = (gcnew System::Windows::Forms::RichTextBox());
 			this->SuspendLayout();
 			// 
 			// buttonDefend
@@ -95,6 +121,7 @@ namespace Monk {
 			this->buttonDefend->TabIndex = 23;
 			this->buttonDefend->Text = L"Defend";
 			this->buttonDefend->UseVisualStyleBackColor = false;
+			this->buttonDefend->Click += gcnew System::EventHandler(this, &BattleUI::buttonDefend_Click);
 			// 
 			// buttonAttack
 			// 
@@ -115,20 +142,21 @@ namespace Monk {
 			this->buttonAttack->UseVisualStyleBackColor = false;
 			this->buttonAttack->Click += gcnew System::EventHandler(this, &BattleUI::buttonAttack_Click);
 			// 
-			// label2
+			// labelPlayerHP
 			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(506, 49);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(47, 13);
-			this->label2->TabIndex = 21;
-			this->label2->Text = L"Your HP";
+			this->labelPlayerHP->AutoSize = true;
+			this->labelPlayerHP->Location = System::Drawing::Point(506, 49);
+			this->labelPlayerHP->Name = L"labelPlayerHP";
+			this->labelPlayerHP->Size = System::Drawing::Size(47, 13);
+			this->labelPlayerHP->TabIndex = 21;
+			this->labelPlayerHP->Text = L"Your HP";
 			// 
 			// txt_EnemyHP
 			// 
 			this->txt_EnemyHP->BackColor = System::Drawing::Color::Red;
 			this->txt_EnemyHP->Location = System::Drawing::Point(104, 71);
 			this->txt_EnemyHP->Name = L"txt_EnemyHP";
+			this->txt_EnemyHP->ReadOnly = true;
 			this->txt_EnemyHP->Size = System::Drawing::Size(100, 20);
 			this->txt_EnemyHP->TabIndex = 20;
 			// 
@@ -137,30 +165,41 @@ namespace Monk {
 			this->txt_PlayerHP->BackColor = System::Drawing::Color::Lime;
 			this->txt_PlayerHP->Location = System::Drawing::Point(509, 71);
 			this->txt_PlayerHP->Name = L"txt_PlayerHP";
+			this->txt_PlayerHP->ReadOnly = true;
 			this->txt_PlayerHP->Size = System::Drawing::Size(100, 20);
 			this->txt_PlayerHP->TabIndex = 19;
 			// 
-			// label1
+			// labelBattleLog
 			// 
-			this->label1->AutoSize = true;
-			this->label1->BackColor = System::Drawing::Color::DarkGray;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
+			this->labelBattleLog->AutoSize = true;
+			this->labelBattleLog->BackColor = System::Drawing::Color::DarkGray;
+			this->labelBattleLog->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(12, 177);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(82, 20);
-			this->label1->TabIndex = 18;
-			this->label1->Text = L"Battle Log";
+			this->labelBattleLog->Location = System::Drawing::Point(22, 154);
+			this->labelBattleLog->Name = L"labelBattleLog";
+			this->labelBattleLog->Size = System::Drawing::Size(82, 20);
+			this->labelBattleLog->TabIndex = 18;
+			this->labelBattleLog->Text = L"Battle Log";
 			// 
-			// lbo_BattleLog
+			// labelMonsterHP
 			// 
-			this->lbo_BattleLog->BackColor = System::Drawing::Color::Black;
-			this->lbo_BattleLog->ForeColor = System::Drawing::Color::Red;
-			this->lbo_BattleLog->FormattingEnabled = true;
-			this->lbo_BattleLog->Location = System::Drawing::Point(12, 200);
-			this->lbo_BattleLog->Name = L"lbo_BattleLog";
-			this->lbo_BattleLog->Size = System::Drawing::Size(318, 225);
-			this->lbo_BattleLog->TabIndex = 17;
+			this->labelMonsterHP->AutoSize = true;
+			this->labelMonsterHP->Location = System::Drawing::Point(157, 55);
+			this->labelMonsterHP->Name = L"labelMonsterHP";
+			this->labelMonsterHP->Size = System::Drawing::Size(49, 13);
+			this->labelMonsterHP->TabIndex = 24;
+			this->labelMonsterHP->Text = L"Their HP";
+			// 
+			// richTextBoxBattleLog
+			// 
+			this->richTextBoxBattleLog->BackColor = System::Drawing::Color::Black;
+			this->richTextBoxBattleLog->Cursor = System::Windows::Forms::Cursors::Default;
+			this->richTextBoxBattleLog->ForeColor = System::Drawing::Color::Red;
+			this->richTextBoxBattleLog->Location = System::Drawing::Point(16, 177);
+			this->richTextBoxBattleLog->Name = L"richTextBoxBattleLog";
+			this->richTextBoxBattleLog->Size = System::Drawing::Size(256, 246);
+			this->richTextBoxBattleLog->TabIndex = 25;
+			this->richTextBoxBattleLog->Text = L"";
 			// 
 			// BattleUI
 			// 
@@ -169,13 +208,14 @@ namespace Monk {
 			this->BackColor = System::Drawing::Color::DarkViolet;
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
 			this->ClientSize = System::Drawing::Size(732, 435);
+			this->Controls->Add(this->richTextBoxBattleLog);
+			this->Controls->Add(this->labelMonsterHP);
 			this->Controls->Add(this->buttonDefend);
 			this->Controls->Add(this->buttonAttack);
-			this->Controls->Add(this->label2);
+			this->Controls->Add(this->labelPlayerHP);
 			this->Controls->Add(this->txt_EnemyHP);
 			this->Controls->Add(this->txt_PlayerHP);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->lbo_BattleLog);
+			this->Controls->Add(this->labelBattleLog);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximumSize = System::Drawing::Size(748, 473);
@@ -188,13 +228,167 @@ namespace Monk {
 
 		}
 
+
+		void start()
+		{
+			print("============================================\n");
+			print(monster.getSpecies() + " wants to battle!\n\n");
+
+			while (monster.isAlive() && player.isAlive())
+			{
+				std::string choice;
+
+				printFight();
+
+				std::cout << "\nWhat will " << player.getName() << " do? \n1.) Attack \n2.) Defend" << std::endl;
+				std::cin >> choice;
+
+				if (choice == "1")
+					turn(1);
+				else if (choice == "2")
+					turn(2);
+
+				std::cout << "--------------------------------------------" << std::endl;
+			}
+
+			std::cout << "--------------------------------------------" << std::endl;
+			printFight();
+			end();
+		}
+
+		void turn(int choice)
+		{
+			if (choice == 1)
+				fight(player, monster);
+			else if (choice == 2)
+				defend(player);
+
+			if (!monster.isAlive())
+			{
+				std::cout << "\n" << monster.getSpecies() << " died." << std::endl;
+				return;
+			}
+
+			enemyTurn();
+
+			if (!player.isAlive())
+			{
+				std::cout << "\n" << player.getName() << " died." << std::endl;
+				return;
+			}
+		}
+
+		void enemyTurn()
+		{
+			double defendChance;
+
+			double percent = double(monster.getHealthPoints()) / double(monster.getHealthPointsMax());
+
+			double random = rand() / double(RAND_MAX);
+
+			if (percent < 0.35)
+				defendChance = 0.25;
+			else if (percent > 0.9)
+				defendChance = 0.05;
+			else
+				defendChance = 0.15;
+
+			if (random < defendChance)
+				defend(monster);
+			else
+				fight(monster, player);
+		}
+
+		void fight(Character &attacking, Character &defending)
+		{
+			int moveAccuracy = generateRandomNumber(0, ATTACK_ACCURACY);
+
+			print("\n" + attacking.getSpecies() + " attacked " + defending.getSpecies() + "\n");
+
+			if (moveAccuracy == 0)
+			{
+				file << attacking.getSpecies() << " missed!" << std::endl;
+				std::cout << attacking.getSpecies() << " missed!" << std::endl;
+			}
+			else
+			{
+				int oldHealth, newHealth, damage, percentage;
+
+				oldHealth = defending.getHealthPoints();
+				defending.setHealthPoints(oldHealth - attacking.getAttackPoints());
+
+				newHealth = defending.getHealthPoints();
+				damage = oldHealth - newHealth,
+					percentage = static_cast<int>(((float)damage / (float)defending.getHealthPointsMax()) * 100);
+
+				std::cout << attacking.getSpecies() << " hit "
+					<< defending.getSpecies() << " for " << damage
+					<< "hp (" << percentage << "%)!" << std::endl;
+
+				file << attacking.getSpecies() << " hit "
+					<< defending.getSpecies() << " for " << damage
+					<< "hp (" << percentage << "%) "
+					<< "[" << newHealth << "/" << defending.getHealthPointsMax() << "]"
+					<< std::endl;
+			}
+
+			//file.close();
+		}
+
+		void defend(Character &defender)
+		{
+			int moveAccuracy = generateRandomNumber(0, DEFENCE_ACCURACY);
+
+			std::cout << "\n" << defender.getSpecies() << " defended" << std::endl;
+
+			if (moveAccuracy == 0) {
+				std::cout << "Move failed!" << std::endl;
+
+				file << defender.getSpecies() << " failed to defend" << std::endl;
+			}
+			else
+			{
+				int oldHealth, newHealth;
+
+				oldHealth = defender.getHealthPoints();
+				defender.setHealthPoints(oldHealth + HEALTH_RECOVERY);
+				newHealth = defender.getHealthPoints();
+
+				std::cout << defender.getSpecies() << " recovered " << newHealth - oldHealth << " HP" << std::endl;
+
+				file << defender.getSpecies() << " defended [" << newHealth
+					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;
+			}
+		}
+
+		void printFight()
+		{
+			player.printStats();
+			std::cout << "\n" << std::endl;
+			monster.printStats();
+		}
+
+		void end()
+		{
+			std::cout << "============================================" << std::endl;
+		}
+
+		void print(std::string input)
+		{
+			System::String^ text = gcnew String(input.c_str());
+			this->richTextBoxBattleLog->AppendText(text);
+			this->richTextBoxBattleLog->ScrollToCaret();
+		}
+
 #pragma endregion
 
 
 private: 
 	System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
-		this->Close();
-		otherform->Show();
+		//this->Close();
+		//otherform->Show();
 	}
+private: System::Void buttonDefend_Click(System::Object^  sender, System::EventArgs^  e) {
+}
 };
 }

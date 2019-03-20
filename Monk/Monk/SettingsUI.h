@@ -134,7 +134,7 @@ namespace Monk {
 			{
 				stopTitleMusic();
 				titleMusic->Load();
-				titleMusic->PlayLooping();
+				titleMusic->PlayLooping();			// fix playback error
 			}
 			catch (Win32Exception^ ex)
 			{
