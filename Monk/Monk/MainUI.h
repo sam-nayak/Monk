@@ -695,16 +695,16 @@ namespace Monk {
 
 		void loseEnding()
 		{
-			std::cout << "\n\n============================================" << std::endl;
-			std::cout << "You Lose!" << std::endl;
-			std::cout << "============================================" << std::endl;
+			print("\n\n============================================\n");
+			print("You Lose!\n");
+			print("============================================\n");
 		}
 
 		void winEnding()
 		{
-			std::cout << "\n============================================" << std::endl;
-			std::cout << "You Win!" << std::endl;
-			std::cout << "============================================" << std::endl;
+			print("\n\n============================================\n");
+			print("You Win!\n");
+			print("============================================\n");
 		}
 
 		void play()
@@ -726,78 +726,6 @@ namespace Monk {
 			startRoom->setHasVisited();
 
 			printDungeon();
-
-			while (!isFinished)
-			{
-				std::string direction;
-
-				int nextX = currentX,
-					nextY = currentY;
-
-				std::cout << "#~> ";
-				getline(std::cin, direction);
-				std::cout << std::endl;
-
-				try
-				{
-					if (direction == "w")
-					{
-						nextX--;
-						direction = "north";
-					}
-					else if (direction == "a")
-					{
-						nextY--;
-						direction = "west";
-					}
-					else if (direction == "s")
-					{
-						nextX++;
-						direction = "south";
-					}
-					else if (direction == "d")
-					{
-						nextY++;
-						direction = "east";
-					}
-					else
-					{
-						continue;
-					}
-
-					currentRoom = rooms.at(nextX).at(nextY);
-				}
-				catch (const std::out_of_range)
-				{
-					std::cout << "You hit a wall\n" << std::endl;
-					continue;
-				}
-
-				std::cout << "You head " << direction << std::endl;
-
-				currentX = nextX;
-				currentY = nextY;
-
-				std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
-				file << "\n" << currentRoom->getName() << std::endl;
-				file.close();
-
-				currentRoom->enter(player);
-
-				printDungeon();
-
-				if (currentRoom->getName() == DEFAULT_TREASUREROOM_NAME)
-				{
-					winEnding();
-					return;
-				}
-
-				if (!player.isAlive())
-				{
-					loseEnding();
-					return;
-				}
-			}
 		}
 
 		void createLogs()
@@ -815,46 +743,112 @@ namespace Monk {
 		{
 			for (size_t i = 0; i < rooms.size(); i++)
 			{
-				std::cout << "[";
+				print("[\t");
 
 
 				for (size_t j = 0; j < rooms[i].size(); j++)
 				{
 					Room *room = rooms[i][j];
 
-					std::cout << (room == startRoom ? 'O'
+					char letter = room == startRoom ? 'O'
 						: room == currentRoom ? 'X'
 						: room->hasVisited()
-						? room->getName()[0] : '-');
+						? room->getName()[0] : '-';
+
+					print(letter + '\t');
 
 					if (j != rooms.size() - 1)
-						std::cout << " ";
+						print(" ");
 				}
 
-				std::cout << "]" << std::endl;
+				print("]\n");
 			}
 
-			std::cout << std::endl;
+			print("\n");
 		}
 
 		void print(char input)
 		{
-
+			std::string temp = std::string(1, input);
+			print(temp);
 		}
 
 		void print(std::string input)
 		{
-
+			System::String^ text = gcnew String(input.c_str());
+			this->textBoxBattleLog->AppendText(text);
 		}
 
 		void moveCharacter(std::string direction)
 		{
+			int nextX = currentX,
+				nextY = currentY;
 
+			try
+			{
+				if (direction == "w")
+				{
+					nextX--;
+					direction = "north";
+				}
+				else if (direction == "a")
+				{
+					nextY--;
+					direction = "west";
+				}
+				else if (direction == "s")
+				{
+					nextX++;
+					direction = "south";
+				}
+				else if (direction == "d")
+				{
+					nextY++;
+					direction = "east";
+				}
+				else
+				{
+					return;
+				}
+
+				currentRoom = rooms.at(nextX).at(nextY);
+			}
+			catch (const std::out_of_range)
+			{
+				print("You hit a wall\n\n");
+				return;
+			}
+
+			print("You head " + direction + "\n");
+
+			currentX = nextX;
+			currentY = nextY;
+
+			std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
+			file << "\n" << currentRoom->getName() << std::endl;
+			file.close();
+
+			//currentRoom->enter(player);
+
+			printDungeon();
+
+			if (currentRoom->getName() == DEFAULT_TREASUREROOM_NAME)
+			{
+				winEnding();
+				return;
+			}
+
+			if (!player.isAlive())
+			{
+				loseEnding();
+				return;
+			}
 		}
 
 		void startGame()
 		{
 			generateRooms();
+			printDungeon();
 			play();
 		}
 
