@@ -1,11 +1,18 @@
 #pragma once
+#include <vector>
 #include <iostream>
+#include <string>
+#include <fstream>
 #include <msclr\marshal_cppstd.h>
 
 #include "Battle.h"
 #include "Monster.h"
 #include "Constants.h"
 #include "Functions.h"
+#include "Player.h"
+#include "Monster.h"
+#include "MonsterRoom.h"
+#include "TreasureRoom.h"
 
 namespace Monk {
 
@@ -16,7 +23,16 @@ namespace Monk {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	Game game;
+	Player player;
+	std::vector<std::vector<Room*>> rooms;
+
+	Room* startRoom;
+	Room* currentRoom;
+
+	bool isFinished = false;
+
+	int currentX;
+	int currentY;
 
 
 	/// <summary>
@@ -583,7 +599,7 @@ namespace Monk {
 			OutputDebugStringA(input.c_str());
 		}
 
-		void initialise()
+		void checkDetails()
 		{
 			std::string name, description;
 
@@ -597,21 +613,21 @@ namespace Monk {
 
 			if (name.size() != 0)
 			{
-				game.setDetails(name, description);
+				setDetails(name, description);
 				stopTitleMusic();
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 			}
 		}
 
-		void startGame()
+		void setDetails()
 		{
-			textBoxHPCurrent->Text = Convert::ToString(game.getPlayer().getHealthPoints());
-			textBoxHPMax->Text = Convert::ToString(game.getPlayer().getHealthPointsMax());
+			textBoxHPCurrent->Text = Convert::ToString(player.getHealthPoints());
+			textBoxHPMax->Text = Convert::ToString(player.getHealthPointsMax());
 
-			textBoxAPCurrent->Text = Convert::ToString(game.getPlayer().getAttackPoints());
+			textBoxAPCurrent->Text = Convert::ToString(player.getAttackPoints());
 
-			textBoxGameNameCurrent->Text = gcnew String((game.getPlayer().getName()).c_str());
+			textBoxGameNameCurrent->Text = gcnew String((player.getName()).c_str());
 		}
 
 		void startTitleMusic()
@@ -639,6 +655,188 @@ namespace Monk {
 			}
 		}
 
+		Room* generateRandomRoom()
+		{
+			int roomType = generateRandomNumber(0, 1);
+
+			switch (roomType)
+			{
+			case 0:
+				return new MonsterRoom();
+			case 1:
+				return new Room();
+			default:
+				return NULL;
+			}
+		}
+
+		void generateRooms()
+		{
+			for (int i = 0; i < ROOMS_SIZE_X; i++)
+			{
+				std::vector<Room*> inner;
+
+				for (int i = 0; i < ROOMS_SIZE_Y; i++)
+				{
+					inner.push_back(generateRandomRoom());
+				}
+				rooms.push_back(inner);
+			}
+			rooms[generateRandomNumber(0, ROOMS_SIZE_X - 1)][generateRandomNumber(0, ROOMS_SIZE_Y - 1)] = new TreasureRoom();
+		}
+
+		void setDetails(std::string name, std::string description)
+		{
+			player.setName(name);
+			player.setDescription(description);
+		}
+
+
+
+		void loseEnding()
+		{
+			std::cout << "\n\n============================================" << std::endl;
+			std::cout << "You Lose!" << std::endl;
+			std::cout << "============================================" << std::endl;
+		}
+
+		void winEnding()
+		{
+			std::cout << "\n============================================" << std::endl;
+			std::cout << "You Win!" << std::endl;
+			std::cout << "============================================" << std::endl;
+		}
+
+		void play()
+		{
+			createLogs();
+
+			int currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1),
+				currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
+
+			while (rooms[currentX][currentY]->getName() != DEFAULT_EMPTYROOM_NAME)
+			{
+				currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1);
+				currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
+			}
+
+			startRoom = rooms[currentX][currentY];
+			currentRoom = startRoom;
+
+			startRoom->setHasVisited();
+
+			printDungeon();
+
+			while (!isFinished)
+			{
+				std::string direction;
+
+				int nextX = currentX,
+					nextY = currentY;
+
+				std::cout << "#~> ";
+				getline(std::cin, direction);
+				std::cout << std::endl;
+
+				try
+				{
+					if (direction == "w")
+					{
+						nextX--;
+						direction = "north";
+					}
+					else if (direction == "a")
+					{
+						nextY--;
+						direction = "west";
+					}
+					else if (direction == "s")
+					{
+						nextX++;
+						direction = "south";
+					}
+					else if (direction == "d")
+					{
+						nextY++;
+						direction = "east";
+					}
+					else
+					{
+						continue;
+					}
+
+					currentRoom = rooms.at(nextX).at(nextY);
+				}
+				catch (const std::out_of_range)
+				{
+					std::cout << "You hit a wall\n" << std::endl;
+					continue;
+				}
+
+				std::cout << "You head " << direction << std::endl;
+
+				currentX = nextX;
+				currentY = nextY;
+
+				std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
+				file << "\n" << currentRoom->getName() << std::endl;
+				file.close();
+
+				currentRoom->enter(player);
+
+				printDungeon();
+
+				if (currentRoom->getName() == DEFAULT_TREASUREROOM_NAME)
+				{
+					winEnding();
+					return;
+				}
+
+				if (!player.isAlive())
+				{
+					loseEnding();
+					return;
+				}
+			}
+		}
+
+		void createLogs()
+		{
+			std::ofstream file(LOGS_PATHWAY, std::ios_base::out);   //std::ios_base::app
+
+			file << player.getName() << " "
+				<< player.getHealthPoints() << "/" << player.getHealthPointsMax()
+				<< " " << player.getAttackPoints() << std::endl;
+
+			file.close();
+		}
+
+		void printDungeon()
+		{
+			for (size_t i = 0; i < rooms.size(); i++)
+			{
+				std::cout << "[";
+
+
+				for (size_t j = 0; j < rooms[i].size(); j++)
+				{
+					Room *room = rooms[i][j];
+
+					std::cout << (room == startRoom ? 'O'
+						: room == currentRoom ? 'X'
+						: room->hasVisited()
+						? room->getName()[0] : '-');
+
+					if (j != rooms.size() - 1)
+						std::cout << " ";
+				}
+
+				std::cout << "]" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
 		void print(char input)
 		{
 
@@ -652,6 +850,12 @@ namespace Monk {
 		void moveCharacter(std::string direction)
 		{
 
+		}
+
+		void startGame()
+		{
+			generateRooms();
+			play();
 		}
 
 
@@ -670,8 +874,6 @@ namespace Monk {
 	}
 
 	private: System::Void buttonStartGame_Click(System::Object^  sender, System::EventArgs^  e) {
-		initialise();
-
 		startGame();
 
 	}
