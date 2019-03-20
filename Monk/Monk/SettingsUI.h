@@ -17,8 +17,10 @@ namespace Monk {
 	{
 
 	public:
-		SettingsUI()
+		SettingsUI(System::Windows::Forms::Form^ menu, System::Media::SoundPlayer^ music)
 		{
+			otherform = menu;
+			titleMusic = music;
 			InitializeComponent();
 		}
 
@@ -38,14 +40,10 @@ namespace Monk {
 
 
 
-
-
-
-	private: System::Windows::Forms::Form ^ otherform;
+	private: System::Windows::Forms::Form^ otherform;
 	private: System::Windows::Forms::CheckBox^  checkBoxMusic;
+	private: System::Media::SoundPlayer^ titleMusic;
 	private: System::Windows::Forms::Button^  buttonBack;
-
-
 
 
 
@@ -89,6 +87,7 @@ namespace Monk {
 			this->checkBoxMusic->TabIndex = 1;
 			this->checkBoxMusic->Text = L"Music";
 			this->checkBoxMusic->UseVisualStyleBackColor = true;
+			this->checkBoxMusic->CheckedChanged += gcnew System::EventHandler(this, &SettingsUI::checkBoxMusic_CheckedChanged);
 			// 
 			// buttonBack
 			// 
@@ -129,11 +128,47 @@ namespace Monk {
 
 		}
 
+		public: void startTitleMusic()
+		{
+			try
+			{
+				stopTitleMusic();
+				titleMusic->Load();
+				titleMusic->PlayLooping();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		public: void stopTitleMusic()
+		{
+			try
+			{
+				titleMusic->Stop();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
 #pragma endregion
 
 
 	private: System::Void buttonBack_Click(System::Object^  sender, System::EventArgs^  e) {
-		this->Close();
+		this->Hide();
 	}
+private: System::Void checkBoxMusic_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (this->checkBoxMusic->Checked)
+	{
+		startTitleMusic();
+	}
+	else
+	{
+		stopTitleMusic();
+	}
+}
 };
 }

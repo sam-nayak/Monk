@@ -68,7 +68,8 @@ namespace Monk {
 
 
 
-	private: System::Media::SoundPlayer^ titleMusic;
+	public: System::Media::SoundPlayer^ titleMusic;
+	private: SettingsUI^ settings = gcnew SettingsUI(this, titleMusic);
 
 	private: System::Windows::Forms::Panel^  panelScreenTitle;
 	private: System::Windows::Forms::Button^  buttonSettings1;
@@ -83,7 +84,6 @@ namespace Monk {
 	private: System::Windows::Forms::Panel^  panelScreenGame;
 	private: System::Windows::Forms::Panel^  panelStats;
 	private: System::Windows::Forms::TextBox^  textBoxHPMax;
-
 
 
 
@@ -618,7 +618,6 @@ namespace Monk {
 			if (name.size() != 0)
 			{
 				setDetails(name, description);
-				stopTitleMusic();
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 
@@ -635,31 +634,6 @@ namespace Monk {
 			textBoxAPCurrent->Text = Convert::ToString(player.getAttackPoints());
 
 			textBoxGameNameCurrent->Text = gcnew String((player.getName()).c_str());
-		}
-
-		void startTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Load();
-				this->titleMusic->PlayLooping();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
-		}
-
-		void stopTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Stop();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
 		}
 
 		Room* generateRandomRoom()
@@ -863,7 +837,30 @@ namespace Monk {
 
 
 #pragma endregion
+		public: void startTitleMusic()
+		{
+			try
+			{
+				this->titleMusic->Load();
+				this->titleMusic->PlayLooping();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
 
+		public: void stopTitleMusic()
+		{
+			try
+			{
+				this->titleMusic->Stop();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
 
 	private: System::Void buttonNewGame_Click(System::Object^  sender, System::EventArgs^  e) {
 		this->panelScreenTitle->Hide();
@@ -872,7 +869,6 @@ namespace Monk {
 	}
 
 	private: System::Void buttonSettings1_Click(System::Object^  sender, System::EventArgs^  e) {
-		SettingsUI^ settings = gcnew SettingsUI();
 		settings->Show();
 	}
 
@@ -884,8 +880,6 @@ namespace Monk {
 		startTitleMusic();
 	}
 	private: System::Void buttonSettings2_Click(System::Object^  sender, System::EventArgs^  e) {
-		startTitleMusic();
-
 		this->panelScreenTitle->Show();
 		this->panelScreenTitle->BringToFront();
 	}

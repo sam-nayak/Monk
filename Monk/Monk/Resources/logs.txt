@@ -1,5 +1,1 @@
-Rghth 50/50 3
-
-Monster Room
-
-Monster Room
+T 50/50 3
