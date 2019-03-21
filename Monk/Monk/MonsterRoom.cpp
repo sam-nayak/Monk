@@ -4,7 +4,6 @@
 #include "Battle.h"
 #include "Functions.h"
 #include "Constants.h"
-#include "BattleUI.h"
 
 MonsterRoom::MonsterRoom()
 	: Room(DEFAULT_MONSTERROOM_NAME)

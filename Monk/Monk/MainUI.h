@@ -5,16 +5,14 @@
 #include <fstream>
 #include <msclr\marshal_cppstd.h>
 
-#include "Battle.h"
 #include "Monster.h"
 #include "Constants.h"
 #include "Functions.h"
 #include "Player.h"
-#include "Monster.h"
 #include "MonsterRoom.h"
 #include "TreasureRoom.h"
-#include "BattleUI.h"
 #include "SettingsUI.h"
+#include "Room.h"
 
 namespace Monk {
 
@@ -35,6 +33,8 @@ namespace Monk {
 
 	int currentX;
 	int currentY;
+
+	Monster monster;
 
 
 	/// <summary>
@@ -108,11 +108,16 @@ namespace Monk {
 	private: System::Windows::Forms::Button^  buttonEast;
 	private: System::Windows::Forms::Button^  buttonNorth;
 	private: System::Windows::Forms::Button^  buttonSouth;
+	private: System::Windows::Forms::Panel^  panelScreenBattle;
 
-
-
-
-
+	private: System::Windows::Forms::RichTextBox^  richTextBoxBattleLog;
+	private: System::Windows::Forms::Label^  labelMonsterHP;
+	private: System::Windows::Forms::Button^  buttonDefend;
+	private: System::Windows::Forms::Button^  buttonAttack;
+	private: System::Windows::Forms::Label^  labelPlayerHP;
+	private: System::Windows::Forms::TextBox^  txt_EnemyHP;
+	private: System::Windows::Forms::TextBox^  txt_PlayerHP;
+	private: System::Windows::Forms::Label^  labelBattleLog;
 
 
 
@@ -148,6 +153,15 @@ namespace Monk {
 			this->buttonStartGame = (gcnew System::Windows::Forms::Button());
 			this->labelName = (gcnew System::Windows::Forms::Label());
 			this->panelScreenGame = (gcnew System::Windows::Forms::Panel());
+			this->panelScreenBattle = (gcnew System::Windows::Forms::Panel());
+			this->richTextBoxBattleLog = (gcnew System::Windows::Forms::RichTextBox());
+			this->labelMonsterHP = (gcnew System::Windows::Forms::Label());
+			this->buttonDefend = (gcnew System::Windows::Forms::Button());
+			this->buttonAttack = (gcnew System::Windows::Forms::Button());
+			this->labelPlayerHP = (gcnew System::Windows::Forms::Label());
+			this->txt_EnemyHP = (gcnew System::Windows::Forms::TextBox());
+			this->txt_PlayerHP = (gcnew System::Windows::Forms::TextBox());
+			this->labelBattleLog = (gcnew System::Windows::Forms::Label());
 			this->textBoxBattleLog = (gcnew System::Windows::Forms::RichTextBox());
 			this->panelStats = (gcnew System::Windows::Forms::Panel());
 			this->labelHPOutOf = (gcnew System::Windows::Forms::Label());
@@ -159,14 +173,15 @@ namespace Monk {
 			this->textBoxAP = (gcnew System::Windows::Forms::TextBox());
 			this->textBoxHP = (gcnew System::Windows::Forms::TextBox());
 			this->buttonMenu = (gcnew System::Windows::Forms::Button());
-			this->buttonSouth = (gcnew System::Windows::Forms::Button());
-			this->buttonNorth = (gcnew System::Windows::Forms::Button());
-			this->buttonEast = (gcnew System::Windows::Forms::Button());
-			this->buttonWest = (gcnew System::Windows::Forms::Button());
 			this->panelControls = (gcnew System::Windows::Forms::Panel());
+			this->buttonWest = (gcnew System::Windows::Forms::Button());
+			this->buttonEast = (gcnew System::Windows::Forms::Button());
+			this->buttonNorth = (gcnew System::Windows::Forms::Button());
+			this->buttonSouth = (gcnew System::Windows::Forms::Button());
 			this->panelScreenTitle->SuspendLayout();
 			this->panelScreenGameSetup->SuspendLayout();
 			this->panelScreenGame->SuspendLayout();
+			this->panelScreenBattle->SuspendLayout();
 			this->panelStats->SuspendLayout();
 			this->panelControls->SuspendLayout();
 			this->SuspendLayout();
@@ -323,6 +338,7 @@ namespace Monk {
 			// 
 			// panelScreenGame
 			// 
+			this->panelScreenGame->Controls->Add(this->panelScreenBattle);
 			this->panelScreenGame->Controls->Add(this->textBoxBattleLog);
 			this->panelScreenGame->Controls->Add(this->panelStats);
 			this->panelScreenGame->Controls->Add(this->panelControls);
@@ -332,6 +348,120 @@ namespace Monk {
 			this->panelScreenGame->Size = System::Drawing::Size(732, 435);
 			this->panelScreenGame->TabIndex = 11;
 			this->panelScreenGame->Visible = false;
+			// 
+			// panelScreenBattle
+			// 
+			this->panelScreenBattle->Controls->Add(this->richTextBoxBattleLog);
+			this->panelScreenBattle->Controls->Add(this->labelMonsterHP);
+			this->panelScreenBattle->Controls->Add(this->buttonDefend);
+			this->panelScreenBattle->Controls->Add(this->buttonAttack);
+			this->panelScreenBattle->Controls->Add(this->labelPlayerHP);
+			this->panelScreenBattle->Controls->Add(this->txt_EnemyHP);
+			this->panelScreenBattle->Controls->Add(this->txt_PlayerHP);
+			this->panelScreenBattle->Controls->Add(this->labelBattleLog);
+			this->panelScreenBattle->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->panelScreenBattle->Location = System::Drawing::Point(0, 0);
+			this->panelScreenBattle->Name = L"panelScreenBattle";
+			this->panelScreenBattle->Size = System::Drawing::Size(732, 435);
+			this->panelScreenBattle->TabIndex = 3;
+			this->panelScreenBattle->Visible = false;
+			// 
+			// richTextBoxBattleLog
+			// 
+			this->richTextBoxBattleLog->BackColor = System::Drawing::Color::Black;
+			this->richTextBoxBattleLog->Cursor = System::Windows::Forms::Cursors::Default;
+			this->richTextBoxBattleLog->ForeColor = System::Drawing::Color::Red;
+			this->richTextBoxBattleLog->Location = System::Drawing::Point(33, 158);
+			this->richTextBoxBattleLog->Name = L"richTextBoxBattleLog";
+			this->richTextBoxBattleLog->ReadOnly = true;
+			this->richTextBoxBattleLog->Size = System::Drawing::Size(319, 271);
+			this->richTextBoxBattleLog->TabIndex = 33;
+			this->richTextBoxBattleLog->Text = L"";
+			// 
+			// labelMonsterHP
+			// 
+			this->labelMonsterHP->AutoSize = true;
+			this->labelMonsterHP->Location = System::Drawing::Point(211, 36);
+			this->labelMonsterHP->Name = L"labelMonsterHP";
+			this->labelMonsterHP->Size = System::Drawing::Size(49, 13);
+			this->labelMonsterHP->TabIndex = 32;
+			this->labelMonsterHP->Text = L"Their HP";
+			// 
+			// buttonDefend
+			// 
+			this->buttonDefend->BackColor = System::Drawing::Color::Black;
+			this->buttonDefend->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonDefend->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonDefend->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonDefend->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonDefend->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonDefend->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonDefend->ForeColor = System::Drawing::Color::Orchid;
+			this->buttonDefend->Location = System::Drawing::Point(352, 82);
+			this->buttonDefend->Name = L"buttonDefend";
+			this->buttonDefend->Size = System::Drawing::Size(111, 42);
+			this->buttonDefend->TabIndex = 31;
+			this->buttonDefend->Text = L"Defend";
+			this->buttonDefend->UseVisualStyleBackColor = false;
+			// 
+			// buttonAttack
+			// 
+			this->buttonAttack->BackColor = System::Drawing::Color::Black;
+			this->buttonAttack->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonAttack->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonAttack->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonAttack->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonAttack->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonAttack->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonAttack->ForeColor = System::Drawing::Color::Orchid;
+			this->buttonAttack->Location = System::Drawing::Point(352, 30);
+			this->buttonAttack->Name = L"buttonAttack";
+			this->buttonAttack->Size = System::Drawing::Size(111, 42);
+			this->buttonAttack->TabIndex = 30;
+			this->buttonAttack->Text = L"Attack";
+			this->buttonAttack->UseVisualStyleBackColor = false;
+			this->buttonAttack->Click += gcnew System::EventHandler(this, &MainUI::buttonAttack_Click);
+			// 
+			// labelPlayerHP
+			// 
+			this->labelPlayerHP->AutoSize = true;
+			this->labelPlayerHP->Location = System::Drawing::Point(560, 30);
+			this->labelPlayerHP->Name = L"labelPlayerHP";
+			this->labelPlayerHP->Size = System::Drawing::Size(47, 13);
+			this->labelPlayerHP->TabIndex = 29;
+			this->labelPlayerHP->Text = L"Your HP";
+			// 
+			// txt_EnemyHP
+			// 
+			this->txt_EnemyHP->BackColor = System::Drawing::Color::Red;
+			this->txt_EnemyHP->Location = System::Drawing::Point(158, 52);
+			this->txt_EnemyHP->Name = L"txt_EnemyHP";
+			this->txt_EnemyHP->ReadOnly = true;
+			this->txt_EnemyHP->Size = System::Drawing::Size(100, 20);
+			this->txt_EnemyHP->TabIndex = 28;
+			// 
+			// txt_PlayerHP
+			// 
+			this->txt_PlayerHP->BackColor = System::Drawing::Color::Lime;
+			this->txt_PlayerHP->Location = System::Drawing::Point(563, 52);
+			this->txt_PlayerHP->Name = L"txt_PlayerHP";
+			this->txt_PlayerHP->ReadOnly = true;
+			this->txt_PlayerHP->Size = System::Drawing::Size(100, 20);
+			this->txt_PlayerHP->TabIndex = 27;
+			// 
+			// labelBattleLog
+			// 
+			this->labelBattleLog->AutoSize = true;
+			this->labelBattleLog->BackColor = System::Drawing::Color::DarkGray;
+			this->labelBattleLog->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->labelBattleLog->Location = System::Drawing::Point(44, 135);
+			this->labelBattleLog->Name = L"labelBattleLog";
+			this->labelBattleLog->Size = System::Drawing::Size(82, 20);
+			this->labelBattleLog->TabIndex = 26;
+			this->labelBattleLog->Text = L"Battle Log";
 			// 
 			// textBoxBattleLog
 			// 
@@ -483,65 +613,16 @@ namespace Monk {
 			this->buttonMenu->UseVisualStyleBackColor = false;
 			this->buttonMenu->Click += gcnew System::EventHandler(this, &MainUI::buttonSettings2_Click);
 			// 
-			// buttonSouth
+			// panelControls
 			// 
-			this->buttonSouth->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonSouth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonSouth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonSouth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSouth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonSouth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonSouth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->buttonSouth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
-				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonSouth->Location = System::Drawing::Point(84, 145);
-			this->buttonSouth->Name = L"buttonSouth";
-			this->buttonSouth->Size = System::Drawing::Size(83, 30);
-			this->buttonSouth->TabIndex = 7;
-			this->buttonSouth->Text = L"South";
-			this->buttonSouth->UseVisualStyleBackColor = false;
-			this->buttonSouth->Click += gcnew System::EventHandler(this, &MainUI::buttonSouth_Click);
-			// 
-			// buttonNorth
-			// 
-			this->buttonNorth->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonNorth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonNorth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonNorth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonNorth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonNorth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonNorth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->buttonNorth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
-				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonNorth->Location = System::Drawing::Point(84, 66);
-			this->buttonNorth->Name = L"buttonNorth";
-			this->buttonNorth->Size = System::Drawing::Size(83, 30);
-			this->buttonNorth->TabIndex = 8;
-			this->buttonNorth->Text = L"North";
-			this->buttonNorth->UseVisualStyleBackColor = false;
-			this->buttonNorth->Click += gcnew System::EventHandler(this, &MainUI::buttonNorth_Click);
-			// 
-			// buttonEast
-			// 
-			this->buttonEast->BackColor = System::Drawing::Color::DarkOrchid;
-			this->buttonEast->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->buttonEast->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
-			this->buttonEast->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonEast->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
-			this->buttonEast->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->buttonEast->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->buttonEast->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
-				static_cast<System::Int32>(static_cast<System::Byte>(49)));
-			this->buttonEast->Location = System::Drawing::Point(163, 104);
-			this->buttonEast->Name = L"buttonEast";
-			this->buttonEast->Size = System::Drawing::Size(83, 30);
-			this->buttonEast->TabIndex = 9;
-			this->buttonEast->Text = L"East";
-			this->buttonEast->UseVisualStyleBackColor = false;
-			this->buttonEast->Click += gcnew System::EventHandler(this, &MainUI::buttonEast_Click);
+			this->panelControls->Controls->Add(this->buttonWest);
+			this->panelControls->Controls->Add(this->buttonEast);
+			this->panelControls->Controls->Add(this->buttonNorth);
+			this->panelControls->Controls->Add(this->buttonSouth);
+			this->panelControls->Location = System::Drawing::Point(3, 3);
+			this->panelControls->Name = L"panelControls";
+			this->panelControls->Size = System::Drawing::Size(266, 284);
+			this->panelControls->TabIndex = 1;
 			// 
 			// buttonWest
 			// 
@@ -563,16 +644,65 @@ namespace Monk {
 			this->buttonWest->UseVisualStyleBackColor = false;
 			this->buttonWest->Click += gcnew System::EventHandler(this, &MainUI::buttonWest_Click);
 			// 
-			// panelControls
+			// buttonEast
 			// 
-			this->panelControls->Controls->Add(this->buttonWest);
-			this->panelControls->Controls->Add(this->buttonEast);
-			this->panelControls->Controls->Add(this->buttonNorth);
-			this->panelControls->Controls->Add(this->buttonSouth);
-			this->panelControls->Location = System::Drawing::Point(3, 3);
-			this->panelControls->Name = L"panelControls";
-			this->panelControls->Size = System::Drawing::Size(266, 284);
-			this->panelControls->TabIndex = 1;
+			this->buttonEast->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonEast->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonEast->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonEast->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonEast->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonEast->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonEast->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonEast->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonEast->Location = System::Drawing::Point(163, 104);
+			this->buttonEast->Name = L"buttonEast";
+			this->buttonEast->Size = System::Drawing::Size(83, 30);
+			this->buttonEast->TabIndex = 9;
+			this->buttonEast->Text = L"East";
+			this->buttonEast->UseVisualStyleBackColor = false;
+			this->buttonEast->Click += gcnew System::EventHandler(this, &MainUI::buttonEast_Click);
+			// 
+			// buttonNorth
+			// 
+			this->buttonNorth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonNorth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonNorth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonNorth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonNorth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonNorth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonNorth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonNorth->Location = System::Drawing::Point(84, 66);
+			this->buttonNorth->Name = L"buttonNorth";
+			this->buttonNorth->Size = System::Drawing::Size(83, 30);
+			this->buttonNorth->TabIndex = 8;
+			this->buttonNorth->Text = L"North";
+			this->buttonNorth->UseVisualStyleBackColor = false;
+			this->buttonNorth->Click += gcnew System::EventHandler(this, &MainUI::buttonNorth_Click);
+			// 
+			// buttonSouth
+			// 
+			this->buttonSouth->BackColor = System::Drawing::Color::DarkOrchid;
+			this->buttonSouth->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->buttonSouth->FlatAppearance->BorderColor = System::Drawing::Color::Indigo;
+			this->buttonSouth->FlatAppearance->MouseDownBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatAppearance->MouseOverBackColor = System::Drawing::Color::BlueViolet;
+			this->buttonSouth->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+			this->buttonSouth->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->buttonSouth->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(42)), static_cast<System::Int32>(static_cast<System::Byte>(37)),
+				static_cast<System::Int32>(static_cast<System::Byte>(49)));
+			this->buttonSouth->Location = System::Drawing::Point(84, 145);
+			this->buttonSouth->Name = L"buttonSouth";
+			this->buttonSouth->Size = System::Drawing::Size(83, 30);
+			this->buttonSouth->TabIndex = 7;
+			this->buttonSouth->Text = L"South";
+			this->buttonSouth->UseVisualStyleBackColor = false;
+			this->buttonSouth->Click += gcnew System::EventHandler(this, &MainUI::buttonSouth_Click);
 			// 
 			// MainUI
 			// 
@@ -597,6 +727,8 @@ namespace Monk {
 			this->panelScreenGameSetup->ResumeLayout(false);
 			this->panelScreenGameSetup->PerformLayout();
 			this->panelScreenGame->ResumeLayout(false);
+			this->panelScreenBattle->ResumeLayout(false);
+			this->panelScreenBattle->PerformLayout();
 			this->panelStats->ResumeLayout(false);
 			this->panelStats->PerformLayout();
 			this->panelControls->ResumeLayout(false);
@@ -623,6 +755,7 @@ namespace Monk {
 			if (name.size() != 0)
 			{
 				setDetails(name, description);
+				this->panelScreenGameSetup->Hide();
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 
@@ -817,11 +950,11 @@ namespace Monk {
 
 			if (currentRoom->getName() == DEFAULT_MONSTERROOM_NAME)
 			{
-				Monster m("gay", 1, 2);
+				startBattlePage();
+				monster = generateRandomMonster();
 
-				BattleUI^ battle = gcnew BattleUI(this, player, m);
-				this->Hide();
-				battle->ShowDialog();
+				if (monster.isAlive() && player.isAlive())
+					start();
 			}
 
 			printDungeon();
@@ -839,28 +972,26 @@ namespace Monk {
 			}
 		}
 
+		
+
 		void startGame()
 		{
 			generateRooms();
 			play();
 		}
 
-		int generateRandomNumber1(int min, int max)
+		void startBattlePage()
 		{
-			return min + rand() % (max + 1);
+			this->richTextBoxBattleLog->Clear();
+			this->txt_PlayerHP->Clear();
+			this->txt_EnemyHP->Clear();
+
+			//this->txt_PlayerHP->Set
+
+			//this->panelScreenGame->Hide();
+			this->panelScreenBattle->Show();
+			this->panelScreenBattle->BringToFront();
 		}
-
-		Monster generateRandomMonster1()
-		{
-			std::string species = MONSTER_RACES[generateRandomNumber1(0, 6)];
-			std::string class_ = CLASSES[generateRandomNumber1(0, 11)];
-
-			int health = generateRandomNumber1(1, 2 * DEFAULT_MONSTER_HEALTH);
-			int attack = generateRandomNumber1(1, 2 * DEFAULT_MONSTER_ATTACK);
-
-			return Monster(species, health, attack);
-		}
-
 
 
 
@@ -890,6 +1021,145 @@ namespace Monk {
 				MessageBox::Show(ex->Message);
 			}
 		}
+
+			
+
+		void start()
+		{
+			printBattle(monster.getSpecies() + " wants to battle!\n\n");
+
+			//while (monster.isAlive() && player.isAlive())
+		}
+
+		void turn(int choice)
+		{
+			if (choice == 1)
+				fight(player, monster);
+			else if (choice == 2)
+				defend(player);
+
+			if (!monster.isAlive())
+			{
+				printBattle("\n" + monster.getSpecies() + " died.\n");
+				return;
+			}
+
+			//enemyTurn();
+
+			if (!player.isAlive())
+			{
+				std::cout << "\n" << player.getName() << " died." << std::endl;
+				return;
+			}
+		}
+
+		void enemyTurn()
+		{
+			double defendChance;
+
+			double percent = double(monster.getHealthPoints()) / double(monster.getHealthPointsMax());
+
+			double random = rand() / double(RAND_MAX);
+
+			if (percent < 0.35)
+				defendChance = 0.25;
+			else if (percent > 0.9)
+				defendChance = 0.05;
+			else
+				defendChance = 0.15;
+
+			if (random < defendChance)
+				defend(monster);
+			else
+				fight(monster, player);
+		}
+
+		void fight(Character &attacking, Character &defending)
+		{
+			int moveAccuracy = generateRandomNumber(0, ATTACK_ACCURACY);
+
+			printBattle("\n" + attacking.getSpecies() + " attacked " + defending.getSpecies() + "\n");
+
+			if (moveAccuracy == 0)
+			{
+				//file << attacking.getSpecies() << " missed!" << std::endl;
+				printBattle(attacking.getSpecies() + " missed!\n");
+			}
+			else
+			{
+				int oldHealth, newHealth, damage, percentage;
+
+				oldHealth = defending.getHealthPoints();
+				defending.setHealthPoints(oldHealth - attacking.getAttackPoints());
+
+				newHealth = defending.getHealthPoints();
+				damage = oldHealth - newHealth,
+					percentage = static_cast<int>(((float)damage / (float)defending.getHealthPointsMax()) * 100);
+
+				std::cout << attacking.getSpecies() << " hit "
+					<< defending.getSpecies() << " for " << damage
+					<< "hp (" << percentage << "%)!" << std::endl;
+
+				/*file << attacking.getSpecies() << " hit "
+					<< defending.getSpecies() << " for " << damage
+					<< "hp (" << percentage << "%) "
+					<< "[" << newHealth << "/" << defending.getHealthPointsMax() << "]"
+					<< std::endl;*/
+			}
+
+			//file.close();
+		}
+
+		void defend(Character &defender)
+		{
+			int moveAccuracy = generateRandomNumber(0, DEFENCE_ACCURACY);
+
+			std::cout << "\n" << defender.getSpecies() << " defended" << std::endl;
+
+			if (moveAccuracy == 0) {
+				std::cout << "Move failed!" << std::endl;
+
+				//file << defender.getSpecies() << " failed to defend" << std::endl;
+			}
+			else
+			{
+				int oldHealth, newHealth;
+
+				oldHealth = defender.getHealthPoints();
+				defender.setHealthPoints(oldHealth + HEALTH_RECOVERY);
+				newHealth = defender.getHealthPoints();
+
+				std::cout << defender.getSpecies() << " recovered " << newHealth - oldHealth << " HP" << std::endl;
+
+				/*file << defender.getSpecies() << " defended [" << newHealth
+					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;*/
+			}
+		}
+
+		void printBattle(std::string input)
+		{
+			System::String^ text = gcnew String(input.c_str());
+			this->richTextBoxBattleLog->AppendText(text);
+			this->richTextBoxBattleLog->ScrollToCaret();
+		}
+
+
+		void printFight()
+		{
+			player.printStats();
+			std::cout << "\n" << std::endl;
+			monster.printStats();
+		}
+
+		void endBattlePage()
+		{
+			
+
+			//this->panelScreenBattle->Hide();
+			this->panelScreenGame->Show();
+			this->panelScreenGame->BringToFront();
+		}
+
 
 	private: System::Void buttonNewGame_Click(System::Object^  sender, System::EventArgs^  e) {
 		this->panelScreenTitle->Hide();
@@ -923,6 +1193,9 @@ private: System::Void buttonSouth_Click(System::Object^  sender, System::EventAr
 }
 private: System::Void buttonWest_Click(System::Object^  sender, System::EventArgs^  e) {
 	moveCharacter("a");
+}
+private: System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
+	turn(1);
 }
 };
 }

@@ -13,9 +13,10 @@ Player::Player()
 {
 }
 
-void Player::setName(std::string &name_)
+void Player::setName(std::string &name)
 {
-	name = name_;
+	this->name = name;
+	this->species = name;
 }
 
 std::string Player::getName() const

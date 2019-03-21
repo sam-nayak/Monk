@@ -5,12 +5,12 @@
 
 #include "Constants.h"
 
-int generateRandomNumber(int min, int max)
+inline int generateRandomNumber(int min, int max)
 {
 	return min + rand() % (max + 1);
 }
 
-Monster generateRandomMonster()
+inline Monster generateRandomMonster()
 {
 	std::string species = MONSTER_RACES[generateRandomNumber(0, 6)];
 	std::string class_ = CLASSES[generateRandomNumber(0, 11)];
