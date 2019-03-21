@@ -36,6 +36,14 @@ namespace Monk {
 
 	Monster monster;
 
+	enum Direction 
+	{ 
+		North,
+		East, 
+		South, 
+		West 
+	};
+
 
 	/// <summary>
 	/// Summary for MainUI
@@ -404,6 +412,7 @@ namespace Monk {
 			this->buttonDefend->TabIndex = 31;
 			this->buttonDefend->Text = L"Defend";
 			this->buttonDefend->UseVisualStyleBackColor = false;
+			this->buttonDefend->Click += gcnew System::EventHandler(this, &MainUI::buttonDefend_Click);
 			// 
 			// buttonAttack
 			// 
@@ -740,6 +749,8 @@ namespace Monk {
 			OutputDebugStringA(input.c_str());
 		}
 
+		//+++++++++++++++++++++++++++ monster functions +++++++++++++++++++++++++++++++//
+
 		void checkDetails()
 		{
 			std::string name, description;
@@ -812,16 +823,12 @@ namespace Monk {
 
 		void loseEnding()
 		{
-			print("\n\n============================================\n");
-			print("You Lose!\n");
-			print("============================================\n");
+			MessageBox::Show("You Won!");
 		}
 
 		void winEnding()
 		{
-			print("\n\n============================================\n");
-			print("You Win!\n");
-			print("============================================\n");
+			MessageBox::Show("You Lost!");
 		}
 
 		void play()
@@ -897,32 +904,33 @@ namespace Monk {
 			this->textBoxBattleLog->ScrollToCaret();
 		}
 
-		void moveCharacter(std::string direction)
+		void moveCharacter(Direction direction)
 		{
+			std::string directionStr;
 			int nextX = currentX,
 				nextY = currentY;
-
+			
 			try
 			{
-				if (direction == "w")
+				if (direction == Direction::North)
 				{
 					nextX--;
-					direction = "north";
+					directionStr = "north";
 				}
-				else if (direction == "a")
+				else if (direction == Direction::West)
 				{
 					nextY--;
-					direction = "west";
+					directionStr = "west";
 				}
-				else if (direction == "s")
+				else if (direction == Direction::South)
 				{
 					nextX++;
-					direction = "south";
+					directionStr = "south";
 				}
-				else if (direction == "d")
+				else if (direction == Direction::East)
 				{
 					nextY++;
-					direction = "east";
+					directionStr = "east";
 				}
 				else
 				{
@@ -937,7 +945,7 @@ namespace Monk {
 				return;
 			}
 
-			print("You head " + direction + "\n");
+			print("You head " + directionStr + "\n");
 
 			currentX = nextX;
 			currentY = nextY;
@@ -1195,20 +1203,24 @@ namespace Monk {
 		this->panelScreenTitle->Show();
 		this->panelScreenTitle->BringToFront();
 	}
-	private: System::Void buttonNorth_Click(System::Object^  sender, System::EventArgs^  e) {
-		moveCharacter("w");
-	}
+	
+private: System::Void buttonNorth_Click(System::Object^  sender, System::EventArgs^  e) {
+	moveCharacter(Direction::North);
+}
 private: System::Void buttonEast_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter("d");
+	moveCharacter(Direction::East);
 }
 private: System::Void buttonSouth_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter("s");
+	moveCharacter(Direction::South);
 }
 private: System::Void buttonWest_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter("a");
+	moveCharacter(Direction::West);
 }
 private: System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
 	turn(1);
+}
+private: System::Void buttonDefend_Click(System::Object^  sender, System::EventArgs^  e) {
+	turn(0);
 }
 };
 }
