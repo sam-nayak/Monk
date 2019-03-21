@@ -130,7 +130,7 @@ namespace Monk {
 		{
 			try
 			{
-				titleMusic->PlayLooping();			// fix playback error
+				titleMusic->PlayLooping();
 			}
 			catch (Win32Exception^ ex)
 			{

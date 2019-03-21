@@ -5,7 +5,7 @@
 #include "Constants.h"
 
 Room::Room()
-	: name(DEFAULT_EMPTYROOM_NAME)
+	: name(Constants::DEFAULT_EMPTYROOM_NAME)
 {
 }
 

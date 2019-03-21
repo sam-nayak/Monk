@@ -778,7 +778,6 @@ namespace Monk {
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 
-				startGameScreen();
 				startGame();
 			}
 		}
@@ -809,6 +808,7 @@ namespace Monk {
 		{
 			generateRooms();
 			player.setHealthPoints();
+			startGameScreen();
 			play();
 		}
 
@@ -831,17 +831,18 @@ namespace Monk {
 		{
 			rooms.clear();
 
-			for (int i = 0; i < ROOMS_SIZE_X; i++)
+			for (int i = 0; i < Constants::ROOMS_SIZE_X; i++)
 			{
 				std::vector<Room*> inner;
 
-				for (int i = 0; i < ROOMS_SIZE_Y; i++)
+				for (int i = 0; i < Constants::ROOMS_SIZE_Y; i++)
 				{
 					inner.push_back(generateRandomRoom());
 				}
 				rooms.push_back(inner);
 			}
-			rooms[generateRandomNumber(0, ROOMS_SIZE_X - 1)][generateRandomNumber(0, ROOMS_SIZE_Y - 1)] = new TreasureRoom();
+			rooms[generateRandomNumber(0, Constants::ROOMS_SIZE_X - 1)]
+				[generateRandomNumber(0, Constants::ROOMS_SIZE_Y - 1)] = new TreasureRoom();
 		}
 
 		void loseEnding()
@@ -860,13 +861,13 @@ namespace Monk {
 		{
 			createLogs();
 
-			currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1);
-			currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
+			currentX = generateRandomNumber(0, Constants::ROOMS_SIZE_X - 1);
+			currentY = generateRandomNumber(0, Constants::ROOMS_SIZE_Y - 1);
 
-			while (rooms[currentX][currentY]->getName() != DEFAULT_EMPTYROOM_NAME)
+			while (rooms[currentX][currentY]->getName() != Constants::DEFAULT_EMPTYROOM_NAME)
 			{
-				currentX = generateRandomNumber(0, ROOMS_SIZE_X - 1);
-				currentY = generateRandomNumber(0, ROOMS_SIZE_Y - 1);
+				currentX = generateRandomNumber(0, Constants::ROOMS_SIZE_X - 1);
+				currentY = generateRandomNumber(0, Constants::ROOMS_SIZE_Y - 1);
 			}
 
 			startRoom = rooms[currentX][currentY];
@@ -879,7 +880,7 @@ namespace Monk {
 
 		void createLogs()
 		{
-			std::ofstream file(LOGS_PATHWAY, std::ios_base::out);   //std::ios_base::app
+			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::out);   //std::ios_base::app
 
 			file << player.getName() << " "
 				<< player.getHealthPoints() << "/" << player.getHealthPointsMax()
@@ -983,13 +984,13 @@ namespace Monk {
 			currentX = nextX;
 			currentY = nextY;
 
-			std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
+			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
 			file << "\n" << currentRoom->getName() << std::endl;
 			file.close();
 
 			currentRoom->enter(player);
 
-			if (currentRoom->getName() == DEFAULT_MONSTERROOM_NAME)
+			if (currentRoom->getName() == Constants::DEFAULT_MONSTERROOM_NAME)
 			{
 				monster = generateRandomMonster();
 
@@ -1000,7 +1001,7 @@ namespace Monk {
 				}
 			}
 
-			if (currentRoom->getName() == DEFAULT_EMPTYROOM_NAME)
+			if (currentRoom->getName() == Constants::DEFAULT_EMPTYROOM_NAME)
 			{
 				if (!player.hasMaxHealthPoints())
 				{
@@ -1014,7 +1015,7 @@ namespace Monk {
 				}
 			}
 
-			if (currentRoom->getName() == DEFAULT_TREASUREROOM_NAME)
+			if (currentRoom->getName() == Constants::DEFAULT_TREASUREROOM_NAME)
 			{
 				winEnding();
 				return;
@@ -1104,7 +1105,7 @@ namespace Monk {
 
 		void fight(Character &attacking, Character &defending)
 		{
-			int moveAccuracy = generateRandomNumber(0, ATTACK_ACCURACY);
+			int moveAccuracy = generateRandomNumber(0, Constants::ATTACK_ACCURACY);
 
 			printBattle("\n" + attacking.getSpecies() + " attacked " + defending.getSpecies() + "\n");
 
@@ -1140,7 +1141,7 @@ namespace Monk {
 
 		void defend(Character &defender)
 		{
-			int moveAccuracy = generateRandomNumber(0, DEFENCE_ACCURACY);
+			int moveAccuracy = generateRandomNumber(0, Constants::DEFENCE_ACCURACY);
 
 			printBattle("\n" + defender.getSpecies() + " defended\n");
 
@@ -1154,7 +1155,7 @@ namespace Monk {
 				int oldHealth, newHealth;
 
 				oldHealth = defender.getHealthPoints();
-				defender.setHealthPoints(oldHealth + HEALTH_RECOVERY);
+				defender.setHealthPoints(oldHealth + Constants::HEALTH_RECOVERY);
 				newHealth = defender.getHealthPoints();
 
 				printBattle(defender.getSpecies() + " recovered " + std::to_string(newHealth - oldHealth) + " HP\n");

@@ -4,12 +4,12 @@
 #include "Constants.h"
 
 Player::Player()
-	: Character(DEFAULT_PLAYER_RACE,
-		DEFAULT_PLAYER_HEALTH,
-		DEFAULT_PLAYER_ATTACK)
+	: Character(Constants::DEFAULT_PLAYER_RACE,
+		Constants::DEFAULT_PLAYER_HEALTH,
+		Constants::DEFAULT_PLAYER_ATTACK)
 
-	, description(DEFAULT_PLAYER_NAME)
-	, class_(DEFAULT_PLAYER_CLASS)
+	, description(Constants::DEFAULT_PLAYER_NAME)
+	, class_(Constants::DEFAULT_PLAYER_CLASS)
 {
 }
 

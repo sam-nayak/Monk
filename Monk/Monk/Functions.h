@@ -12,11 +12,11 @@ inline int generateRandomNumber(int min, int max)
 
 inline Monster generateRandomMonster()
 {
-	std::string species = MONSTER_RACES[generateRandomNumber(0, 6)];
-	std::string class_ = CLASSES[generateRandomNumber(0, 11)];
+	std::string species = Constants::MONSTER_RACES[generateRandomNumber(0, 6)];
+	std::string class_ = Constants::CLASSES[generateRandomNumber(0, 11)];
 
-	int health = generateRandomNumber(1, 2 * DEFAULT_MONSTER_HEALTH);
-	int attack = generateRandomNumber(1, 2 * DEFAULT_MONSTER_ATTACK);
+	int health = generateRandomNumber(1, 2 * Constants::DEFAULT_MONSTER_HEALTH);
+	int attack = generateRandomNumber(1, 2 * Constants::DEFAULT_MONSTER_ATTACK);
 
 	return Monster(species, health, attack);
 }

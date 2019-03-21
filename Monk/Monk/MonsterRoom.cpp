@@ -5,7 +5,7 @@
 #include "Constants.h"
 
 MonsterRoom::MonsterRoom()
-	: Room(DEFAULT_MONSTERROOM_NAME)
+	: Room(Constants::DEFAULT_MONSTERROOM_NAME)
 	, monster(generateRandomMonster())
 {
 }

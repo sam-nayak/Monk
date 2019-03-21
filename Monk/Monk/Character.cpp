@@ -37,9 +37,9 @@ void Character::setHealthPoints()
 
 void Character::setHealthPoints(int health)
 {
-	if (health < DEFAULT_HEALTH_DEATH)
+	if (health < Constants::DEFAULT_HEALTH_DEATH)
 	{
-		healthPoints = DEFAULT_HEALTH_DEATH;
+		healthPoints = Constants::DEFAULT_HEALTH_DEATH;
 	}
 	else if (health > healthPointsMax) {
 		healthPoints = healthPointsMax;
@@ -74,7 +74,7 @@ bool Character::isAlive()
 	//if (healthPoints < DEFAULT_HEALTH_DEATH);
 	//	healthPoints = DEFAULT_HEALTH_DEATH;
 
-	return healthPoints > DEFAULT_HEALTH_DEATH;
+	return healthPoints > Constants::DEFAULT_HEALTH_DEATH;
 }
 
 bool Character::hasMaxHealthPoints()
