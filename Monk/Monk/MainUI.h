@@ -950,8 +950,8 @@ namespace Monk {
 
 			if (currentRoom->getName() == DEFAULT_MONSTERROOM_NAME)
 			{
-				startBattlePage();
 				monster = generateRandomMonster();
+				startBattlePage();
 
 				if (monster.isAlive() && player.isAlive())
 					start();
@@ -986,11 +986,17 @@ namespace Monk {
 			this->txt_PlayerHP->Clear();
 			this->txt_EnemyHP->Clear();
 
-			//this->txt_PlayerHP->Set
+			updateBattlePage();
 
 			//this->panelScreenGame->Hide();
 			this->panelScreenBattle->Show();
 			this->panelScreenBattle->BringToFront();
+		}
+
+		void updateBattlePage()
+		{
+			this->txt_PlayerHP->Text = Convert::ToString(player.getHealthPoints());
+			this->txt_EnemyHP->Text = Convert::ToString(monster.getHealthPoints());
 		}
 
 
@@ -1038,19 +1044,28 @@ namespace Monk {
 			else if (choice == 2)
 				defend(player);
 
+			updateBattlePage();
+
 			if (!monster.isAlive())
 			{
 				printBattle("\n" + monster.getSpecies() + " died.\n");
-				return;
+				endBattlePage();
 			}
 
-			//enemyTurn();
+		
+			enemyTurn();
+
+			updateBattlePage();
+			
 
 			if (!player.isAlive())
 			{
-				std::cout << "\n" << player.getName() << " died." << std::endl;
+				printBattle("\n" + player.getName() + " died.\n");
 				return;
 			}
+
+			
+
 		}
 
 		void enemyTurn()
@@ -1096,9 +1111,9 @@ namespace Monk {
 				damage = oldHealth - newHealth,
 					percentage = static_cast<int>(((float)damage / (float)defending.getHealthPointsMax()) * 100);
 
-				std::cout << attacking.getSpecies() << " hit "
-					<< defending.getSpecies() << " for " << damage
-					<< "hp (" << percentage << "%)!" << std::endl;
+				printBattle(attacking.getSpecies() + " hit "
+					+ defending.getSpecies() + " for " + std::to_string(damage)
+					+ "hp (" + std::to_string(percentage) + "%)!\n");
 
 				/*file << attacking.getSpecies() << " hit "
 					<< defending.getSpecies() << " for " << damage
@@ -1114,10 +1129,10 @@ namespace Monk {
 		{
 			int moveAccuracy = generateRandomNumber(0, DEFENCE_ACCURACY);
 
-			std::cout << "\n" << defender.getSpecies() << " defended" << std::endl;
+			printBattle("\n" + defender.getSpecies() + " defended\n");
 
 			if (moveAccuracy == 0) {
-				std::cout << "Move failed!" << std::endl;
+				printBattle("Move failed!\n");
 
 				//file << defender.getSpecies() << " failed to defend" << std::endl;
 			}
@@ -1129,7 +1144,7 @@ namespace Monk {
 				defender.setHealthPoints(oldHealth + HEALTH_RECOVERY);
 				newHealth = defender.getHealthPoints();
 
-				std::cout << defender.getSpecies() << " recovered " << newHealth - oldHealth << " HP" << std::endl;
+				printBattle(defender.getSpecies() + " recovered " + std::to_string(newHealth - oldHealth) + " HP\n");
 
 				/*file << defender.getSpecies() << " defended [" << newHealth
 					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;*/
@@ -1153,9 +1168,7 @@ namespace Monk {
 
 		void endBattlePage()
 		{
-			
-
-			//this->panelScreenBattle->Hide();
+			this->panelScreenBattle->Hide();
 			this->panelScreenGame->Show();
 			this->panelScreenGame->BringToFront();
 		}
