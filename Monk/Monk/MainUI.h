@@ -77,7 +77,7 @@ namespace Monk {
 
 
 	public: System::Media::SoundPlayer^ titleMusic;
-	private: SettingsUI^ settings = gcnew SettingsUI(this, titleMusic);
+	private: SettingsUI^ settings;
 
 	private: System::Windows::Forms::Panel^  panelScreenTitle;
 	private: System::Windows::Forms::Button^  buttonSettings1;
@@ -200,6 +200,10 @@ namespace Monk {
 			this->titleMusic->SoundLocation = L"Resources\\RPG_Title_1.wav";
 			this->titleMusic->Stream = nullptr;
 			this->titleMusic->Tag = nullptr;
+			//
+			// settings
+			//
+			this->settings = gcnew SettingsUI(titleMusic);
 			// 
 			// panelScreenTitle
 			// 
@@ -774,7 +778,7 @@ namespace Monk {
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 
-				updateGameScreen();
+				startGameScreen();
 				startGame();
 			}
 		}
@@ -787,6 +791,12 @@ namespace Monk {
 
 		//+++++++++++++++++++++++++++ Game Page +++++++++++++++++++++++++++++++//
 
+		void startGameScreen()
+		{
+			this->textBoxBattleLog->Clear();
+			updateGameScreen();
+		}
+
 		void updateGameScreen()
 		{
 			textBoxHPCurrent->Text = Convert::ToString(player.getHealthPoints());
@@ -798,6 +808,7 @@ namespace Monk {
 		void startGame()
 		{
 			generateRooms();
+			player.setHealthPoints();
 			play();
 		}
 
@@ -818,6 +829,8 @@ namespace Monk {
 
 		void generateRooms()
 		{
+			rooms.clear();
+
 			for (int i = 0; i < ROOMS_SIZE_X; i++)
 			{
 				std::vector<Room*> inner;
@@ -1177,21 +1190,8 @@ namespace Monk {
 		{
 			try
 			{
-				stopTitleMusic();
 				this->titleMusic->Load();
 				this->titleMusic->PlayLooping();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
-		}
-
-		void stopTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Stop();
 			}
 			catch (Win32Exception^ ex)
 			{

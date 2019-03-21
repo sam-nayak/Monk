@@ -17,9 +17,8 @@ namespace Monk {
 	{
 
 	public:
-		SettingsUI(System::Windows::Forms::Form^ menu, System::Media::SoundPlayer^ music)
+		SettingsUI(System::Media::SoundPlayer^ music)
 		{
-			otherform = menu;
 			titleMusic = music;
 			InitializeComponent();
 		}
@@ -40,7 +39,6 @@ namespace Monk {
 
 
 
-	private: System::Windows::Forms::Form^ otherform;
 	private: System::Windows::Forms::CheckBox^  checkBoxMusic;
 	private: System::Media::SoundPlayer^ titleMusic;
 	private: System::Windows::Forms::Button^  buttonBack;
@@ -132,8 +130,6 @@ namespace Monk {
 		{
 			try
 			{
-				stopTitleMusic();
-				titleMusic->Load();
 				titleMusic->PlayLooping();			// fix playback error
 			}
 			catch (Win32Exception^ ex)
