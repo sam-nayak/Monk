@@ -15,6 +15,7 @@ class Character
 
 	public:
 		Character(std::string species, int health, int attack);
+		Character();
 
 		int getHealthPoints() const;
 		int getHealthPointsMax() const;

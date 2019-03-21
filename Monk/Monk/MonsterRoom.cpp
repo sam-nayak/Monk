@@ -23,7 +23,7 @@ void MonsterRoom::enter(Player &player)
 
 	if (monster.isAlive())
 	{
-		Battle(player, monster);
+		//Battle(player, monster);
 		//BattleUI battle = new BattleUI();
 	}
 	else

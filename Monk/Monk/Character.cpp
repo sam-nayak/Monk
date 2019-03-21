@@ -11,6 +11,10 @@ Character::Character(std::string species, int health, int attack)
 {
 }
 
+Character::Character()
+{
+}
+
 int Character::getHealthPoints() const
 {
 	return healthPoints;

@@ -161,7 +161,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="SettingsUI.cpp" />
-    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TreasureRoom.cpp" />
   </ItemGroup>
   <ItemGroup>

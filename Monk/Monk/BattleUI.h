@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-#include "Functions.h"
 #include "Constants.h"
 #include "Room.h"
 #include "Monster.h"
@@ -19,10 +18,8 @@ namespace Monk {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	Player &player;
-	Monster &monster;
+	Monster monster;
 	std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
-
 
 	/// <summary>
 	/// Summary for BattleUI
@@ -31,7 +28,7 @@ namespace Monk {
 	{
 
 	public:
-		BattleUI(System::Windows::Forms::Form^ menu, Player p, Monster m)
+		BattleUI(System::Windows::Forms::Form^ menu, Player &p, Monster &m)
 		{
 			otherform = menu;
 			player = player;
@@ -41,6 +38,7 @@ namespace Monk {
 			if (monster.isAlive() && player.isAlive())
 				start();
 		}
+
 
 	protected:
 		/// <summary>
@@ -72,7 +70,7 @@ namespace Monk {
 
 
 	protected:
-	
+		
 	protected:
 
 	protected:
@@ -84,6 +82,7 @@ namespace Monk {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+		
 
 
 #pragma region Windows Form Designer generated code
@@ -234,22 +233,20 @@ namespace Monk {
 			print("============================================\n");
 			print(monster.getSpecies() + " wants to battle!\n\n");
 
-			while (monster.isAlive() && player.isAlive())
-			{
-				std::string choice;
+			//while (monster.isAlive() && player.isAlive())
+			//{
+			//	printFight();
 
-				printFight();
+			//	//std::cout << "\nWhat will " << player.getName() << " do? \n1.) Attack \n2.) Defend" << std::endl;
+			//	//std::cin >> choice;
 
-				std::cout << "\nWhat will " << player.getName() << " do? \n1.) Attack \n2.) Defend" << std::endl;
-				std::cin >> choice;
+			//	/*if (choice == "1")
+			//		turn(1);
+			//	else if (choice == "2")
+			//		turn(2);*/
 
-				if (choice == "1")
-					turn(1);
-				else if (choice == "2")
-					turn(2);
-
-				std::cout << "--------------------------------------------" << std::endl;
-			}
+			//	std::cout << "--------------------------------------------" << std::endl;
+			//}
 
 			std::cout << "--------------------------------------------" << std::endl;
 			printFight();
@@ -265,7 +262,7 @@ namespace Monk {
 
 			if (!monster.isAlive())
 			{
-				std::cout << "\n" << monster.getSpecies() << " died." << std::endl;
+				print("\n" + monster.getSpecies() + " died.\n");
 				return;
 			}
 
@@ -273,7 +270,7 @@ namespace Monk {
 
 			if (!player.isAlive())
 			{
-				std::cout << "\n" << player.getName() << " died." << std::endl;
+				print("\n" + player.getName() + " died." + "\n");
 				return;
 			}
 		}
@@ -308,7 +305,7 @@ namespace Monk {
 			if (moveAccuracy == 0)
 			{
 				file << attacking.getSpecies() << " missed!" << std::endl;
-				std::cout << attacking.getSpecies() << " missed!" << std::endl;
+				print(attacking.getSpecies() + " missed!\n");
 			}
 			else
 			{
@@ -321,9 +318,9 @@ namespace Monk {
 				damage = oldHealth - newHealth,
 					percentage = static_cast<int>(((float)damage / (float)defending.getHealthPointsMax()) * 100);
 
-				std::cout << attacking.getSpecies() << " hit "
-					<< defending.getSpecies() << " for " << damage
-					<< "hp (" << percentage << "%)!" << std::endl;
+				print(attacking.getSpecies() + " hit "
+					+ defending.getSpecies() + " for " + std::to_string(damage)
+					+ "hp (" + std::to_string(percentage) + "%)!\n");
 
 				file << attacking.getSpecies() << " hit "
 					<< defending.getSpecies() << " for " << damage
@@ -342,7 +339,7 @@ namespace Monk {
 			std::cout << "\n" << defender.getSpecies() << " defended" << std::endl;
 
 			if (moveAccuracy == 0) {
-				std::cout << "Move failed!" << std::endl;
+				print("Move failed!\n");
 
 				file << defender.getSpecies() << " failed to defend" << std::endl;
 			}
@@ -354,7 +351,7 @@ namespace Monk {
 				defender.setHealthPoints(oldHealth + HEALTH_RECOVERY);
 				newHealth = defender.getHealthPoints();
 
-				std::cout << defender.getSpecies() << " recovered " << newHealth - oldHealth << " HP" << std::endl;
+				print(defender.getSpecies() + " recovered " + std::to_string(newHealth - oldHealth) + " HP\n");
 
 				file << defender.getSpecies() << " defended [" << newHealth
 					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;
@@ -380,15 +377,33 @@ namespace Monk {
 			this->richTextBoxBattleLog->ScrollToCaret();
 		}
 
+		int generateRandomNumber(int min, int max)
+		{
+			return min + rand() % (max + 1);
+		}
+
+		Monster generateRandomMonster()
+		{
+			std::string species = MONSTER_RACES[generateRandomNumber(0, 6)];
+			std::string class_ = CLASSES[generateRandomNumber(0, 11)];
+
+			int health = generateRandomNumber(1, 2 * DEFAULT_MONSTER_HEALTH);
+			int attack = generateRandomNumber(1, 2 * DEFAULT_MONSTER_ATTACK);
+
+			return Monster(species, health, attack);
+		}
+
 #pragma endregion
 
 
 private: 
 	System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
+		turn(1);
 		//this->Close();
 		//otherform->Show();
 	}
 private: System::Void buttonDefend_Click(System::Object^  sender, System::EventArgs^  e) {
+	turn(2);
 }
 };
 }

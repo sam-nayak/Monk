@@ -7,6 +7,7 @@ class Monster
 : public Character {
 	public:
 		Monster(std::string species, int health, int attack);
+		Monster();
 
 };
 

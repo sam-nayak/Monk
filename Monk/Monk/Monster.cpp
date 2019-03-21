@@ -5,3 +5,7 @@ Monster::Monster(std::string species, int health, int attack)
 	: Character(species, health, attack)
 {
 }
+
+Monster::Monster()
+{
+}

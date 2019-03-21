@@ -813,10 +813,16 @@ namespace Monk {
 			file << "\n" << currentRoom->getName() << std::endl;
 			file.close();
 
-			//currentRoom->enter(player);
-			BattleUI^ battle = gcnew BattleUI(this);
-			this->Hide();
-			battle->ShowDialog();
+			currentRoom->enter(player);
+
+			if (currentRoom->getName() == DEFAULT_MONSTERROOM_NAME)
+			{
+				Monster m("gay", 1, 2);
+
+				BattleUI^ battle = gcnew BattleUI(this, player, m);
+				this->Hide();
+				battle->ShowDialog();
+			}
 
 			printDungeon();
 
@@ -838,6 +844,23 @@ namespace Monk {
 			generateRooms();
 			play();
 		}
+
+		int generateRandomNumber1(int min, int max)
+		{
+			return min + rand() % (max + 1);
+		}
+
+		Monster generateRandomMonster1()
+		{
+			std::string species = MONSTER_RACES[generateRandomNumber1(0, 6)];
+			std::string class_ = CLASSES[generateRandomNumber1(0, 11)];
+
+			int health = generateRandomNumber1(1, 2 * DEFAULT_MONSTER_HEALTH);
+			int attack = generateRandomNumber1(1, 2 * DEFAULT_MONSTER_ATTACK);
+
+			return Monster(species, health, attack);
+		}
+
 
 
 
