@@ -745,11 +745,15 @@ namespace Monk {
 
 		}
 
-		void debugToConsole(std::string input) {
-			OutputDebugStringA(input.c_str());
-		}
+		//+++++++++++++++++++++++++++ Setup Page +++++++++++++++++++++++++++++++//
 
-		//+++++++++++++++++++++++++++ monster functions +++++++++++++++++++++++++++++++//
+		void showTitleScreen()
+		{
+			this->panelScreenTitle->Show();
+			this->panelScreenTitle->BringToFront();
+		}
+	
+		//+++++++++++++++++++++++++++ Setup Page +++++++++++++++++++++++++++++++//
 
 		void checkDetails()
 		{
@@ -770,19 +774,31 @@ namespace Monk {
 				this->panelScreenGame->Show();
 				this->panelScreenGame->BringToFront();
 
-				setDetails();
+				updateGameScreen();
 				startGame();
 			}
 		}
 
-		void setDetails()
+		void setDetails(std::string name, std::string description)
+		{
+			player.setName(name);
+			player.setDescription(description);
+		}
+
+		//+++++++++++++++++++++++++++ Game Page +++++++++++++++++++++++++++++++//
+
+		void updateGameScreen()
 		{
 			textBoxHPCurrent->Text = Convert::ToString(player.getHealthPoints());
 			textBoxHPMax->Text = Convert::ToString(player.getHealthPointsMax());
-
 			textBoxAPCurrent->Text = Convert::ToString(player.getAttackPoints());
-
 			textBoxGameNameCurrent->Text = gcnew String((player.getName()).c_str());
+		}
+
+		void startGame()
+		{
+			generateRooms();
+			play();
 		}
 
 		Room* generateRandomRoom()
@@ -815,20 +831,16 @@ namespace Monk {
 			rooms[generateRandomNumber(0, ROOMS_SIZE_X - 1)][generateRandomNumber(0, ROOMS_SIZE_Y - 1)] = new TreasureRoom();
 		}
 
-		void setDetails(std::string name, std::string description)
-		{
-			player.setName(name);
-			player.setDescription(description);
-		}
-
 		void loseEnding()
 		{
-			MessageBox::Show("You Won!");
+			MessageBox::Show("You Lose!");
+			showTitleScreen();
 		}
 
 		void winEnding()
 		{
-			MessageBox::Show("You Lost!");
+			MessageBox::Show("You Won!");
+			showTitleScreen();
 		}
 
 		void play()
@@ -912,29 +924,36 @@ namespace Monk {
 			
 			try
 			{
-				if (direction == Direction::North)
+				switch (direction)
 				{
-					nextX--;
-					directionStr = "north";
-				}
-				else if (direction == Direction::West)
-				{
-					nextY--;
-					directionStr = "west";
-				}
-				else if (direction == Direction::South)
-				{
-					nextX++;
-					directionStr = "south";
-				}
-				else if (direction == Direction::East)
-				{
-					nextY++;
-					directionStr = "east";
-				}
-				else
-				{
-					return;
+					case Direction::North:
+					{
+						nextX--;
+						directionStr = "north";
+						break;
+					}
+					case Direction::West:
+					{
+						nextY--;
+						directionStr = "west";
+						break;
+					}
+					case Direction::South:
+					{
+						nextX++;
+						directionStr = "south";
+						break;
+					}
+					case Direction::East:
+					{
+						nextY++;
+						directionStr = "east";
+						break;
+					}
+					default:
+					{
+						return;
+					}
 				}
 
 				currentRoom = rooms.at(nextX).at(nextY);
@@ -946,6 +965,7 @@ namespace Monk {
 			}
 
 			print("You head " + directionStr + "\n");
+			printDungeon();
 
 			currentX = nextX;
 			currentY = nextY;
@@ -959,13 +979,27 @@ namespace Monk {
 			if (currentRoom->getName() == DEFAULT_MONSTERROOM_NAME)
 			{
 				monster = generateRandomMonster();
-				startBattlePage();
 
 				if (monster.isAlive() && player.isAlive())
-					start();
+				{
+					startBattlePage();
+					battleStart();
+				}
 			}
 
-			printDungeon();
+			if (currentRoom->getName() == DEFAULT_EMPTYROOM_NAME)
+			{
+				if (!player.hasMaxHealthPoints())
+				{
+					if (MessageBox::Show("Do you want to pray to restore health?",
+						"Empty Room", MessageBoxButtons::YesNo,
+						MessageBoxIcon::Question) == System::Windows::Forms::DialogResult::Yes)
+					{
+						player.setHealthPoints();
+						updateGameScreen();
+					}
+				}
+			}
 
 			if (currentRoom->getName() == DEFAULT_TREASUREROOM_NAME)
 			{
@@ -980,13 +1014,7 @@ namespace Monk {
 			}
 		}
 
-		
-
-		void startGame()
-		{
-			generateRooms();
-			play();
-		}
+		//+++++++++++++++++++++++++++ Battle Page +++++++++++++++++++++++++++++++//
 
 		void startBattlePage()
 		{
@@ -1007,38 +1035,7 @@ namespace Monk {
 			this->txt_EnemyHP->Text = Convert::ToString(monster.getHealthPoints());
 		}
 
-
-
-#pragma endregion
-		public: void startTitleMusic()
-		{
-			try
-			{
-				stopTitleMusic();
-				this->titleMusic->Load();
-				this->titleMusic->PlayLooping();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
-		}
-
-		public: void stopTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Stop();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
-		}
-
-			
-
-		void start()
+		void battleStart()
 		{
 			printBattle(monster.getSpecies() + " wants to battle!\n\n");
 
@@ -1058,30 +1055,25 @@ namespace Monk {
 			{
 				printBattle("\n" + monster.getSpecies() + " died.\n");
 				endBattlePage();
+				return;
 			}
 
-		
 			enemyTurn();
-
 			updateBattlePage();
-			
 
 			if (!player.isAlive())
 			{
 				printBattle("\n" + player.getName() + " died.\n");
+				endBattlePage();
 				return;
 			}
-
-			
-
 		}
 
 		void enemyTurn()
 		{
+
 			double defendChance;
-
 			double percent = double(monster.getHealthPoints()) / double(monster.getHealthPointsMax());
-
 			double random = rand() / double(RAND_MAX);
 
 			if (percent < 0.35)
@@ -1166,21 +1158,51 @@ namespace Monk {
 			this->richTextBoxBattleLog->ScrollToCaret();
 		}
 
-
-		void printFight()
-		{
-			player.printStats();
-			std::cout << "\n" << std::endl;
-			monster.printStats();
-		}
-
 		void endBattlePage()
 		{
 			this->panelScreenBattle->Hide();
 			this->panelScreenGame->Show();
 			this->panelScreenGame->BringToFront();
+			updateGameScreen();
 		}
 
+
+		//+++++++++++++++++++++++++++ Global Functions +++++++++++++++++++++++++++++++//
+
+		void debugToConsole(std::string input) {
+			OutputDebugStringA(input.c_str());
+		}
+
+		void startTitleMusic()
+		{
+			try
+			{
+				stopTitleMusic();
+				this->titleMusic->Load();
+				this->titleMusic->PlayLooping();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		void stopTitleMusic()
+		{
+			try
+			{
+				this->titleMusic->Stop();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+#pragma endregion
+		
+		
+	//+++++++++++++++++++++++++++ Events +++++++++++++++++++++++++++++++//
 
 	private: System::Void buttonNewGame_Click(System::Object^  sender, System::EventArgs^  e) {
 		this->panelScreenTitle->Hide();
@@ -1200,27 +1222,26 @@ namespace Monk {
 		startTitleMusic();
 	}
 	private: System::Void buttonSettings2_Click(System::Object^  sender, System::EventArgs^  e) {
-		this->panelScreenTitle->Show();
-		this->panelScreenTitle->BringToFront();
+		showTitleScreen();
 	}
 	
-private: System::Void buttonNorth_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter(Direction::North);
-}
-private: System::Void buttonEast_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter(Direction::East);
-}
-private: System::Void buttonSouth_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter(Direction::South);
-}
-private: System::Void buttonWest_Click(System::Object^  sender, System::EventArgs^  e) {
-	moveCharacter(Direction::West);
-}
-private: System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
-	turn(1);
-}
-private: System::Void buttonDefend_Click(System::Object^  sender, System::EventArgs^  e) {
-	turn(0);
-}
-};
+	private: System::Void buttonNorth_Click(System::Object^  sender, System::EventArgs^  e) {
+		moveCharacter(Direction::North);
+	}
+	private: System::Void buttonEast_Click(System::Object^  sender, System::EventArgs^  e) {
+		moveCharacter(Direction::East);
+	}
+	private: System::Void buttonSouth_Click(System::Object^  sender, System::EventArgs^  e) {
+		moveCharacter(Direction::South);
+	}
+	private: System::Void buttonWest_Click(System::Object^  sender, System::EventArgs^  e) {
+		moveCharacter(Direction::West);
+	}
+	private: System::Void buttonAttack_Click(System::Object^  sender, System::EventArgs^  e) {
+		turn(1);
+	}
+	private: System::Void buttonDefend_Click(System::Object^  sender, System::EventArgs^  e) {
+		turn(0);
+	}
+	};
 }

@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "MonsterRoom.h"
-#include "Battle.h"
 #include "Functions.h"
 #include "Constants.h"
 
@@ -27,8 +26,6 @@ void MonsterRoom::enter(Player &player)
 	}
 	else
 	{
-		std::cout << "\nA dead " << monster.getSpecies() << " lies on the ground in the middle of the room" << std::endl;
-
 		Room::enter(player);
 	}
 }

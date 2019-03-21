@@ -34,29 +34,14 @@ void Room::enter(Player &player)
 {
 	isVisited = true;
 
-	std::cout << "\nYou are in an empty room" << std::endl;
-
-	if (!player.hasMaxHealthPoints())
+	/*if (!player.hasMaxHealthPoints())
 	{
-		std::string choice;
+		player.setHealthPoints();
 
-		std::cout << "\nWhat will " << player.getName() << " do? \n1.) Restore Health" << std::endl;
-		getline(std::cin, choice);
-
-		if (choice == "1")
-		{
-			player.setHealthPoints();
-
-			std::cout << "\nHealth restored" << std::endl;
-
-			std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
-			file << player.getName() << 
-				" [" << player.getHealthPoints() << "/" << player.getHealthPointsMax()
-				<< "]" << std::endl;
-			file.close();
-		
-		}
-	}
-
-	std::cout << "============================================" << std::endl;
+		std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
+		file << player.getName() <<
+			" [" << player.getHealthPoints() << "/" << player.getHealthPointsMax()
+			<< "]" << std::endl;
+		file.close();
+	}*/
 }
