@@ -746,6 +746,21 @@ namespace Monk {
 
 		//+++++++++++++++++++++++++++ Setup Page +++++++++++++++++++++++++++++++//
 
+		// Loads and plays title screen music on loadup
+		void startTitleMusic()
+		{
+			try
+			{
+				this->titleMusic->Load();
+				this->titleMusic->PlayLooping();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		// Displays the title screen
 		void showTitleScreen()
 		{
 			this->panelScreenTitle->Show();
@@ -754,6 +769,15 @@ namespace Monk {
 	
 		//+++++++++++++++++++++++++++ Setup Page +++++++++++++++++++++++++++++++//
 
+		// Displays the setup screen
+		void showSetupScreen()
+		{
+			this->panelScreenTitle->Hide();
+			this->panelScreenGameSetup->Show();
+			this->panelScreenGameSetup->BringToFront();
+		}
+
+		// Validates user details and allows the user to continue
 		void checkDetails()
 		{
 			std::string name, description;
@@ -769,14 +793,11 @@ namespace Monk {
 			if (name.size() != 0)
 			{
 				setDetails(name, description);
-				this->panelScreenGameSetup->Hide();
-				this->panelScreenGame->Show();
-				this->panelScreenGame->BringToFront();
-
 				startGame();
 			}
 		}
 
+		// Sets the Player object's name and description to the user's input
 		void setDetails(std::string name, std::string description)
 		{
 			player.setName(name);
@@ -785,12 +806,17 @@ namespace Monk {
 
 		//+++++++++++++++++++++++++++ Game Page +++++++++++++++++++++++++++++++//
 
+		// Displays the game screen
 		void startGameScreen()
 		{
 			this->textBoxBattleLog->Clear();
+			this->panelScreenGameSetup->Hide();
+			this->panelScreenGame->Show();
+			this->panelScreenGame->BringToFront();
 			updateGameScreen();
 		}
 
+		// Updates the player's HP to the game screen
 		void updateGameScreen()
 		{
 			textBoxHPCurrent->Text = Convert::ToString(player.getHealthPoints());
@@ -799,6 +825,7 @@ namespace Monk {
 			textBoxGameNameCurrent->Text = gcnew String((player.getName()).c_str());
 		}
 
+		// Setup and initialisation of game
 		void startGame()
 		{
 			generateRooms();
@@ -807,6 +834,7 @@ namespace Monk {
 			play();
 		}
 
+		// Creates the logs file
 		void createLogs()
 		{
 			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
@@ -822,6 +850,7 @@ namespace Monk {
 			file.close();
 		}
 
+		// Generates a MonsterRoom or EmptyRoom based on random number
 		Room* generateRandomRoom()
 		{
 			int roomType = generateRandomNumber(0, 1);
@@ -837,6 +866,7 @@ namespace Monk {
 			}
 		}
 
+		// Dungeon generation by generating rooms and adding to vector
 		void generateRooms()
 		{
 			rooms.clear();
@@ -855,6 +885,7 @@ namespace Monk {
 				[generateRandomNumber(0, Constants::ROOMS_SIZE_Y - 1)] = new TreasureRoom();
 		}
 
+		// Sets up state of current game i.e. start room
 		void play()
 		{
 			createLogs();
@@ -876,11 +907,17 @@ namespace Monk {
 			printDungeon();
 		}
 
+		// Outputs the dungeon to the textbox on the game screen
+		// - 'O' indicates start room
+		// - 'X' indicates current room
+		// - 'E' indicates discovered empty room
+		// - 'M' indicates discovered monster room
+		// - '-' indicates undiscovered room
 		void printDungeon()
 		{
 			for (size_t i = 0; i < rooms.size(); i++)
 			{
-				print("[\t");
+				printLog("[\t");
 
 				for (size_t j = 0; j < rooms[i].size(); j++)
 				{
@@ -891,32 +928,33 @@ namespace Monk {
 						: room->hasVisited()
 						? room->getName()[0] : '-';
 
-					print(letter);
-					print("\t");
+					printLog(letter);
+					printLog("\t");
 
 					if (j != rooms.size() - 1)
-						print(" ");
+						printLog(" ");
 				}
-
-				print("]\n");
+				printLog("]\n");
 			}
-
-			print("\n");
+			printLog("\n");
 		}
 
-		void print(char input)
+		// Outputs the log of information to the game textbox (char only)
+		void printLog(char input)
 		{
 			std::string temp = std::string(1, input);
-			print(temp);
+			printLog(temp);
 		}
 
-		void print(std::string input)
+		// Outputs the log of information to the game textbox (string only)
+		void printLog(std::string input)
 		{
 			System::String^ text = gcnew String(input.c_str());
 			this->textBoxBattleLog->AppendText(text);
 			this->textBoxBattleLog->ScrollToCaret();
 		}
 
+		// Moves the position of character in the dungeon by one space
 		void moveCharacter(Direction direction)
 		{
 			std::string directionStr;
@@ -956,16 +994,15 @@ namespace Monk {
 						return;
 					}
 				}
-
 				currentRoom = rooms.at(nextX).at(nextY);
 			}
 			catch (const std::out_of_range)
 			{
-				print("You hit a wall\n\n");
+				printLog("You hit a wall\n\n");
 				return;
 			}
 
-			print("You head " + directionStr + "\n");
+			printLog("You head " + directionStr + "\n");
 			printDungeon();
 
 			currentX = nextX;
@@ -983,8 +1020,8 @@ namespace Monk {
 
 				if (monster.isAlive() && player.isAlive())
 				{
-					startBattlePage();
-					battleStart();
+					showBattleScreen();
+					printBattle(monster.getSpecies() + " wants to battle!\n\n");
 				}
 			}
 
@@ -1013,20 +1050,16 @@ namespace Monk {
 				winEnding();
 				return;
 			}
-
-			if (!player.isAlive())
-			{
-				loseEnding();
-				return;
-			}
 		}
 
+		// Displays a messagebox indicating that the user lost due to non-positive health
 		void loseEnding()
 		{
 			MessageBox::Show("You Lose!");
 			showTitleScreen();
 		}
 
+		// Displays a messagebox indicating that the user won due to finding treasure room
 		void winEnding()
 		{
 			MessageBox::Show("You Won!");
@@ -1035,30 +1068,27 @@ namespace Monk {
 
 		//+++++++++++++++++++++++++++ Battle Page +++++++++++++++++++++++++++++++//
 
-		void startBattlePage()
+		// Displays the battle screen
+		void showBattleScreen()
 		{
 			this->richTextBoxBattleLog->Clear();
 			this->txt_PlayerHP->Clear();
 			this->txt_EnemyHP->Clear();
 
-			updateBattlePage();
+			updateBattleScreen();
 
-			//this->panelScreenGame->Hide();
 			this->panelScreenBattle->Show();
 			this->panelScreenBattle->BringToFront();
 		}
 
-		void updateBattlePage()
+		// Updates the textboxes that show HP of the Player and the Monster in battle screen
+		void updateBattleScreen()
 		{
 			this->txt_PlayerHP->Text = Convert::ToString(player.getHealthPoints());
 			this->txt_EnemyHP->Text = Convert::ToString(monster.getHealthPoints());
 		}
 
-		void battleStart()
-		{
-			printBattle(monster.getSpecies() + " wants to battle!\n\n");
-		}
-
+		// Dictates Player battle choice (attack, defend) based on user input
 		void turn(int choice)
 		{
 			if (choice == 1)
@@ -1066,29 +1096,31 @@ namespace Monk {
 			else if (choice == 2)
 				defend(player);
 
-			updateBattlePage();
+			updateBattleScreen();
 
 			if (!monster.isAlive())
 			{
 				printBattle("\n" + monster.getSpecies() + " died.\n");
-				endBattlePage();
+				endBattleScreen();
+				printLog("Monster has been defeated\n\n");
 				return;
 			}
 
 			enemyTurn();
-			updateBattlePage();
+			updateBattleScreen();
 
 			if (!player.isAlive())
 			{
 				printBattle("\n" + player.getName() + " died.\n");
-				endBattlePage();
-				return;
+				endBattleScreen();
+				printLog("You have been defeated\n\n");
+				loseEnding();
 			}
 		}
 
+		// Monster AI for battle turn (attack, defend) based on random chance
 		void enemyTurn()
 		{
-
 			double defendChance;
 			double percent = double(monster.getHealthPoints()) / double(monster.getHealthPointsMax());
 			double random = rand() / double(RAND_MAX);
@@ -1106,6 +1138,7 @@ namespace Monk {
 				fight(monster, player);
 		}
 
+		// Attacking character will damage the the defending character (lose health)
 		void fight(Character &attacking, Character &defending)
 		{
 			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
@@ -1144,6 +1177,7 @@ namespace Monk {
 			file.close();
 		}
 
+		// Character will restore health by X amount
 		void defend(Character &defender)
 		{
 			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
@@ -1174,6 +1208,7 @@ namespace Monk {
 			file.close();
 		}
 
+		// Outputs the battle to the battle textbox
 		void printBattle(std::string input)
 		{
 			System::String^ text = gcnew String(input.c_str());
@@ -1181,32 +1216,21 @@ namespace Monk {
 			this->richTextBoxBattleLog->ScrollToCaret();
 		}
 
-		void endBattlePage()
+		// Displays the game screen
+		void endBattleScreen()
 		{
 			this->panelScreenBattle->Hide();
 			this->panelScreenGame->Show();
 			this->panelScreenGame->BringToFront();
-			print("Monster has been defeated\n\n");
+
 			updateGameScreen();
 		}
 
 		//+++++++++++++++++++++++++++ Global Functions +++++++++++++++++++++++++++++++//
 
+		// Debugging only
 		void debugToConsole(std::string input) {
 			OutputDebugStringA(input.c_str());
-		}
-
-		void startTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Load();
-				this->titleMusic->PlayLooping();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
 		}
 
 #pragma endregion
@@ -1215,13 +1239,11 @@ namespace Monk {
 	//+++++++++++++++++++++++++++ Events +++++++++++++++++++++++++++++++//
 
 	private: System::Void buttonNewGame_Click(System::Object^  sender, System::EventArgs^  e) {
-		this->panelScreenTitle->Hide();
-		this->panelScreenGameSetup->Show();
-		this->panelScreenGameSetup->BringToFront();
+		showSetupScreen();
 	}
 
 	private: System::Void buttonSettings1_Click(System::Object^  sender, System::EventArgs^  e) {
-		settings->Show();
+		this->settings->Show();
 	}
 
 	private: System::Void buttonStartGame_Click(System::Object^  sender, System::EventArgs^  e) {
