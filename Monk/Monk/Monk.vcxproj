@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="EmptyRoom.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="MainUI.h">
       <FileType>CppForm</FileType>
@@ -145,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="EmptyRoom.cpp" />
     <ClCompile Include="MainUI.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterRoom.cpp" />

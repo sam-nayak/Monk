@@ -1,11 +1,8 @@
-#include <iostream>
-#include <fstream>
-
 #include "Room.h"
 #include "Constants.h"
 
 Room::Room()
-	: name(Constants::DEFAULT_EMPTYROOM_NAME)
+	: name(Constants::DEFAULT_ROOM_NAME)
 {
 }
 
@@ -29,19 +26,7 @@ void Room::setHasVisited()
 	isVisited = true;
 }
 
-
 void Room::enter(Player &player)
 {
 	isVisited = true;
-
-	/*if (!player.hasMaxHealthPoints())
-	{
-		player.setHealthPoints();
-
-		std::ofstream file(LOGS_PATHWAY, std::ios_base::app);
-		file << player.getName() <<
-			" [" << player.getHealthPoints() << "/" << player.getHealthPointsMax()
-			<< "]" << std::endl;
-		file.close();
-	}*/
 }

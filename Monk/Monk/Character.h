@@ -28,8 +28,6 @@ class Character
 		bool isAlive();
 		bool hasMaxHealthPoints();
 
-		virtual void printStats();
-
 		std::string getSpecies();
 };
 

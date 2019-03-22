@@ -10,7 +10,7 @@ class Player: public Character {
 		void setName(std::string &name_);
 		void setDescription(std::string &description_);
 
-		void printStats() override;
+		std::string getDescription();
 
 		std::string getName() const;
 
@@ -18,7 +18,6 @@ class Player: public Character {
 		int experience;
 		
 		std::string description;
-		std::string class_;
 };
 
 #endif

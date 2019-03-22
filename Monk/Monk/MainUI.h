@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <iostream>
 #include <string>
 #include <fstream>
 #include <msclr\marshal_cppstd.h>
@@ -11,6 +10,7 @@
 #include "Player.h"
 #include "MonsterRoom.h"
 #include "TreasureRoom.h"
+#include "EmptyRoom.h"
 #include "SettingsUI.h"
 #include "Room.h"
 
@@ -43,7 +43,6 @@ namespace Monk {
 		South, 
 		West 
 	};
-
 
 	/// <summary>
 	/// Summary for MainUI
@@ -200,10 +199,6 @@ namespace Monk {
 			this->titleMusic->SoundLocation = L"Resources\\RPG_Title_1.wav";
 			this->titleMusic->Stream = nullptr;
 			this->titleMusic->Tag = nullptr;
-			//
-			// settings
-			//
-			this->settings = gcnew SettingsUI(titleMusic);
 			// 
 			// panelScreenTitle
 			// 
@@ -812,6 +807,21 @@ namespace Monk {
 			play();
 		}
 
+		void createLogs()
+		{
+			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
+
+			file << "---------------------------------------------------------" << std::endl;
+
+			file << player.getName() << " ["
+				<< player.getHealthPoints() << " /" << player.getHealthPointsMax()
+				<< "] {" << player.getAttackPoints() << "}" << std::endl;
+
+			file << player.getDescription() << std::endl;
+
+			file.close();
+		}
+
 		Room* generateRandomRoom()
 		{
 			int roomType = generateRandomNumber(0, 1);
@@ -821,7 +831,7 @@ namespace Monk {
 			case 0:
 				return new MonsterRoom();
 			case 1:
-				return new Room();
+				return new EmptyRoom();
 			default:
 				return NULL;
 			}
@@ -845,18 +855,6 @@ namespace Monk {
 				[generateRandomNumber(0, Constants::ROOMS_SIZE_Y - 1)] = new TreasureRoom();
 		}
 
-		void loseEnding()
-		{
-			MessageBox::Show("You Lose!");
-			showTitleScreen();
-		}
-
-		void winEnding()
-		{
-			MessageBox::Show("You Won!");
-			showTitleScreen();
-		}
-
 		void play()
 		{
 			createLogs();
@@ -876,17 +874,6 @@ namespace Monk {
 			startRoom->setHasVisited();
 
 			printDungeon();
-		}
-
-		void createLogs()
-		{
-			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::out);   //std::ios_base::app
-
-			file << player.getName() << " "
-				<< player.getHealthPoints() << "/" << player.getHealthPointsMax()
-				<< " " << player.getAttackPoints() << std::endl;
-
-			file.close();
 		}
 
 		void printDungeon()
@@ -1011,6 +998,12 @@ namespace Monk {
 					{
 						player.setHealthPoints();
 						updateGameScreen();
+
+						std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
+						file << player.getName() <<
+							" [" << player.getHealthPoints() << "/" << player.getHealthPointsMax()
+							<< "]" << std::endl;
+						file.close();
 					}
 				}
 			}
@@ -1026,6 +1019,18 @@ namespace Monk {
 				loseEnding();
 				return;
 			}
+		}
+
+		void loseEnding()
+		{
+			MessageBox::Show("You Lose!");
+			showTitleScreen();
+		}
+
+		void winEnding()
+		{
+			MessageBox::Show("You Won!");
+			showTitleScreen();
 		}
 
 		//+++++++++++++++++++++++++++ Battle Page +++++++++++++++++++++++++++++++//
@@ -1052,8 +1057,6 @@ namespace Monk {
 		void battleStart()
 		{
 			printBattle(monster.getSpecies() + " wants to battle!\n\n");
-
-			//while (monster.isAlive() && player.isAlive())
 		}
 
 		void turn(int choice)
@@ -1105,13 +1108,15 @@ namespace Monk {
 
 		void fight(Character &attacking, Character &defending)
 		{
+			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
+
 			int moveAccuracy = generateRandomNumber(0, Constants::ATTACK_ACCURACY);
 
 			printBattle("\n" + attacking.getSpecies() + " attacked " + defending.getSpecies() + "\n");
 
 			if (moveAccuracy == 0)
 			{
-				//file << attacking.getSpecies() << " missed!" << std::endl;
+				file << attacking.getSpecies() << " missed!" << std::endl;
 				printBattle(attacking.getSpecies() + " missed!\n");
 			}
 			else
@@ -1129,18 +1134,20 @@ namespace Monk {
 					+ defending.getSpecies() + " for " + std::to_string(damage)
 					+ "hp (" + std::to_string(percentage) + "%)!\n");
 
-				/*file << attacking.getSpecies() << " hit "
+				file << attacking.getSpecies() << " hit "
 					<< defending.getSpecies() << " for " << damage
 					<< "hp (" << percentage << "%) "
 					<< "[" << newHealth << "/" << defending.getHealthPointsMax() << "]"
-					<< std::endl;*/
+					<< std::endl;
 			}
 
-			//file.close();
+			file.close();
 		}
 
 		void defend(Character &defender)
 		{
+			std::ofstream file(Constants::LOGS_PATHWAY, std::ios_base::app);
+
 			int moveAccuracy = generateRandomNumber(0, Constants::DEFENCE_ACCURACY);
 
 			printBattle("\n" + defender.getSpecies() + " defended\n");
@@ -1148,7 +1155,7 @@ namespace Monk {
 			if (moveAccuracy == 0) {
 				printBattle("Move failed!\n");
 
-				//file << defender.getSpecies() << " failed to defend" << std::endl;
+				file << defender.getSpecies() << " failed to defend" << std::endl;
 			}
 			else
 			{
@@ -1160,9 +1167,11 @@ namespace Monk {
 
 				printBattle(defender.getSpecies() + " recovered " + std::to_string(newHealth - oldHealth) + " HP\n");
 
-				/*file << defender.getSpecies() << " defended [" << newHealth
-					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;*/
+				file << defender.getSpecies() << " defended [" << newHealth
+					<< "/" << defender.getHealthPointsMax() << "]" << std::endl;
 			}
+
+			file.close();
 		}
 
 		void printBattle(std::string input)
@@ -1177,9 +1186,9 @@ namespace Monk {
 			this->panelScreenBattle->Hide();
 			this->panelScreenGame->Show();
 			this->panelScreenGame->BringToFront();
+			print("Monster has been defeated\n\n");
 			updateGameScreen();
 		}
-
 
 		//+++++++++++++++++++++++++++ Global Functions +++++++++++++++++++++++++++++++//
 
@@ -1220,6 +1229,7 @@ namespace Monk {
 	}
 
 	private: System::Void MainUI_Load(System::Object^  sender, System::EventArgs^  e) {
+		this->settings = gcnew SettingsUI(titleMusic);
 		startTitleMusic();
 	}
 	private: System::Void buttonSettings2_Click(System::Object^  sender, System::EventArgs^  e) {

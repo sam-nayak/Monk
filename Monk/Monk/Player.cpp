@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Player.h"
 #include "Constants.h"
 
@@ -9,7 +7,6 @@ Player::Player()
 		Constants::DEFAULT_PLAYER_ATTACK)
 
 	, description(Constants::DEFAULT_PLAYER_NAME)
-	, class_(Constants::DEFAULT_PLAYER_CLASS)
 {
 }
 
@@ -24,18 +21,12 @@ std::string Player::getName() const
 	return name;
 }
 
-void Player::setDescription(std::string &description_)
+void Player::setDescription(std::string &description)
 {
-	description = description_;
+	this->description = description;
 }
 
-
-void Player::printStats()
+std::string Player::getDescription()
 {
-	int percent = static_cast<int>((float(healthPoints) / float(healthPointsMax)) * 100);
-
-	std::cout << name << " | " << species << " " << class_
-		<< "\nAP: " << attackPoints
-		<< "\nHP: " << healthPoints << "/" << healthPointsMax
-		<< " (" << percent << "%)" << std::endl;
+	return description;
 }

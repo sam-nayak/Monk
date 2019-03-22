@@ -7,7 +7,6 @@ class TreasureRoom: public Room
 {
 	public:
 		TreasureRoom();
-
 		void enter(Player &player) override;
 };
 

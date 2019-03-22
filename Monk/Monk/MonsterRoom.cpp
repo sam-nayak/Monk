@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "MonsterRoom.h"
 #include "Functions.h"
 #include "Constants.h"

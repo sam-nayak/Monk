@@ -11,22 +11,16 @@ namespace Constants
 		"Orc", "Undead", "Tauren", "Troll", "Blood Elf", "Goblin", "Pandaren"
 	};
 
-	const std::string CLASSES[] = {
-		"Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight",
-		"Shaman", "Mage", "Warlock", "Monk", "Druid", "Demon Hunter"
-	};
-
 	const std::string DEFAULT_EMPTYROOM_NAME = "Empty Room";
 	const std::string DEFAULT_MONSTERROOM_NAME = "Monster Room";
 	const std::string DEFAULT_TREASUREROOM_NAME = "Treasure Room";
+	const std::string DEFAULT_ROOM_NAME = "None";
 
 	const std::string DEFAULT_PLAYER_NAME = "Unknown";
 	const std::string DEFAULT_PLAYER_RACE = PLAYER_RACES[0];
-	const std::string DEFAULT_PLAYER_CLASS = CLASSES[9];
 
 	const std::string DEFAULT_MONSTER_NAME = "Monster";
 	const std::string DEFAULT_MONSTER_RACE = MONSTER_RACES[0];
-	const std::string DEFAULT_MONSTER_CLASS = CLASSES[0];
 
 	const int ROOMS_SIZE_X = 6;
 	const int ROOMS_SIZE_Y = 5;

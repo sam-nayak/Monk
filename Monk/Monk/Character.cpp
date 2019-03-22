@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Character.h"
 #include "Constants.h"
 
@@ -54,16 +52,6 @@ void Character::setAttackPoints(int attack)
 	attackPoints = attack;
 }
 
-void Character::printStats()
-{
-	int percent = static_cast<int>((float(healthPoints) / float(healthPointsMax)) * 100);
-
-	std::cout << species
-				<< "\nAP: " << attackPoints
-				<< "\nHP: " << healthPoints << "/" << healthPointsMax 
-				<< " (" << percent << "%)" << std::endl;
-}
-
 std::string Character::getSpecies()
 {
 	return species;
@@ -71,9 +59,6 @@ std::string Character::getSpecies()
 
 bool Character::isAlive()
 {
-	//if (healthPoints < DEFAULT_HEALTH_DEATH);
-	//	healthPoints = DEFAULT_HEALTH_DEATH;
-
 	return healthPoints > Constants::DEFAULT_HEALTH_DEATH;
 }
 

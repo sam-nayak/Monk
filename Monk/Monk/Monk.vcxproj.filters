@@ -45,6 +45,9 @@
     <ClInclude Include="SettingsUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EmptyRoom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SettingsUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EmptyRoom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
