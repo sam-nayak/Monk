@@ -156,9 +156,6 @@
     <ClCompile Include="TreasureRoom.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="F:\School\University\Year 2\Object-Oriented Systems Development\Part 2\Monk\Monk\Resources\RPG_Title_1.wav" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -175,6 +172,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\map_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Battle_Music.wav" />
+    <Media Include="Resources\Title_Music.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

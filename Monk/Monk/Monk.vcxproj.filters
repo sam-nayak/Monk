@@ -79,11 +79,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="F:\School\University\Year 2\Object-Oriented Systems Development\Part 2\Monk\Monk\Resources\RPG_Title_1.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="MainUI.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
@@ -95,5 +90,13 @@
     <Image Include="Resources\map_icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resources\Battle_Music.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Resources\Title_Music.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

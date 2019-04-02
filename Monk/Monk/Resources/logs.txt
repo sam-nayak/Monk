@@ -1,0 +1,54 @@
+---------------------------------------------------------
+Thth [15 /15] {3}
+th
+
+Monster Room
+Thth hit Goblin for 3hp (17%) [14/17]
+Goblin hit Thth for 5hp (33%) [10/15]
+---------------------------------------------------------
+Thth [15 /15] {3}
+th
+
+Empty Room
+
+Empty Room
+
+Empty Room
+
+Monster Room
+Thth hit Tauren for 3hp (15%) [16/19]
+Tauren hit Thth for 3hp (20%) [12/15]
+Thth missed!
+Tauren hit Thth for 3hp (20%) [9/15]
+---------------------------------------------------------
+Tht [15 /15] {3}
+thh
+
+Empty Room
+
+Monster Room
+---------------------------------------------------------
+Egeg [15 /15] {3}
+rgrg
+
+Empty Room
+
+Empty Room
+
+Monster Room
+Egeg hit Tauren for 3hp (23%) [10/13]
+Tauren hit Egeg for 3hp (20%) [12/15]
+Egeg hit Tauren for 3hp (23%) [7/13]
+Tauren hit Egeg for 3hp (20%) [9/15]
+Egeg missed!
+Tauren missed!
+Egeg hit Tauren for 3hp (23%) [4/13]
+Tauren missed!
+Egeg hit Tauren for 3hp (23%) [1/13]
+Tauren hit Egeg for 3hp (20%) [6/15]
+Egeg hit Tauren for 1hp (7%) [0/13]
+
+Empty Room
+Egeg [15/15]
+
+Monster Room

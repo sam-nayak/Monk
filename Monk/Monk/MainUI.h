@@ -68,6 +68,8 @@ namespace Monk {
 				delete components;
 			}
 		}
+	private: System::Media::SoundPlayer^  music;
+	protected:
 
 
 
@@ -75,7 +77,7 @@ namespace Monk {
 
 
 
-	public: System::Media::SoundPlayer^ titleMusic;
+
 	private: SettingsUI^ settings;
 
 	private: System::Windows::Forms::Panel^  panelScreenTitle;
@@ -148,7 +150,7 @@ namespace Monk {
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(MainUI::typeid));
-			this->titleMusic = (gcnew System::Media::SoundPlayer());
+			this->music = (gcnew System::Media::SoundPlayer());
 			this->panelScreenTitle = (gcnew System::Windows::Forms::Panel());
 			this->buttonSettings1 = (gcnew System::Windows::Forms::Button());
 			this->buttonNewGame = (gcnew System::Windows::Forms::Button());
@@ -193,12 +195,12 @@ namespace Monk {
 			this->panelControls->SuspendLayout();
 			this->SuspendLayout();
 			// 
-			// titleMusic
+			// music
 			// 
-			this->titleMusic->LoadTimeout = 10000;
-			this->titleMusic->SoundLocation = L"Resources\\RPG_Title_1.wav";
-			this->titleMusic->Stream = nullptr;
-			this->titleMusic->Tag = nullptr;
+			this->music->SoundLocation = gcnew String(Constants::TITLE_MUSIC_PATHWAY.c_str());
+			this->music->LoadTimeout = 10000;
+			this->music->Stream = nullptr;
+			this->music->Tag = nullptr;
 			// 
 			// panelScreenTitle
 			// 
@@ -208,7 +210,7 @@ namespace Monk {
 			this->panelScreenTitle->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panelScreenTitle->Location = System::Drawing::Point(0, 0);
 			this->panelScreenTitle->Name = L"panelScreenTitle";
-			this->panelScreenTitle->Size = System::Drawing::Size(732, 435);
+			this->panelScreenTitle->Size = System::Drawing::Size(736, 439);
 			this->panelScreenTitle->TabIndex = 0;
 			// 
 			// buttonSettings1
@@ -273,7 +275,7 @@ namespace Monk {
 			this->panelScreenGameSetup->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panelScreenGameSetup->Location = System::Drawing::Point(0, 0);
 			this->panelScreenGameSetup->Name = L"panelScreenGameSetup";
-			this->panelScreenGameSetup->Size = System::Drawing::Size(732, 435);
+			this->panelScreenGameSetup->Size = System::Drawing::Size(736, 439);
 			this->panelScreenGameSetup->TabIndex = 2;
 			this->panelScreenGameSetup->Visible = false;
 			// 
@@ -352,7 +354,7 @@ namespace Monk {
 			this->panelScreenGame->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panelScreenGame->Location = System::Drawing::Point(0, 0);
 			this->panelScreenGame->Name = L"panelScreenGame";
-			this->panelScreenGame->Size = System::Drawing::Size(732, 435);
+			this->panelScreenGame->Size = System::Drawing::Size(736, 439);
 			this->panelScreenGame->TabIndex = 11;
 			this->panelScreenGame->Visible = false;
 			// 
@@ -369,7 +371,7 @@ namespace Monk {
 			this->panelScreenBattle->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panelScreenBattle->Location = System::Drawing::Point(0, 0);
 			this->panelScreenBattle->Name = L"panelScreenBattle";
-			this->panelScreenBattle->Size = System::Drawing::Size(732, 435);
+			this->panelScreenBattle->Size = System::Drawing::Size(736, 439);
 			this->panelScreenBattle->TabIndex = 3;
 			this->panelScreenBattle->Visible = false;
 			// 
@@ -718,7 +720,7 @@ namespace Monk {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::DarkViolet;
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Center;
-			this->ClientSize = System::Drawing::Size(732, 435);
+			this->ClientSize = System::Drawing::Size(736, 439);
 			this->Controls->Add(this->panelScreenGame);
 			this->Controls->Add(this->panelScreenTitle);
 			this->Controls->Add(this->panelScreenGameSetup);
@@ -745,20 +747,6 @@ namespace Monk {
 		}
 
 		//+++++++++++++++++++++++++++ Setup Page +++++++++++++++++++++++++++++++//
-
-		// Loads and plays title screen music on loadup
-		void startTitleMusic()
-		{
-			try
-			{
-				this->titleMusic->Load();
-				this->titleMusic->PlayLooping();
-			}
-			catch (Win32Exception^ ex)
-			{
-				MessageBox::Show(ex->Message);
-			}
-		}
 
 		// Displays the title screen
 		void showTitleScreen()
@@ -1079,6 +1067,8 @@ namespace Monk {
 
 			this->panelScreenBattle->Show();
 			this->panelScreenBattle->BringToFront();
+
+			changeMusic(Constants::BATTLE_MUSIC_PATHWAY);
 		}
 
 		// Updates the textboxes that show HP of the Player and the Monster in battle screen
@@ -1224,9 +1214,44 @@ namespace Monk {
 			this->panelScreenGame->BringToFront();
 
 			updateGameScreen();
+			changeMusic(Constants::TITLE_MUSIC_PATHWAY);
 		}
 
 		//+++++++++++++++++++++++++++ Global Functions +++++++++++++++++++++++++++++++//
+
+		// Loads and plays music
+		void startMusic()
+		{
+			try
+			{
+				this->music->Load();
+				this->music->PlayLooping();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		// Stops the music
+		void stopMusic()
+		{
+			try
+			{
+				this->music->Stop();
+			}
+			catch (Win32Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		void changeMusic(std::string music_)
+		{
+			stopMusic();
+			this->music->SoundLocation = gcnew String(music_.c_str());
+			startMusic();
+		}
 
 		// Debugging only
 		void debugToConsole(std::string input) {
@@ -1251,8 +1276,8 @@ namespace Monk {
 	}
 
 	private: System::Void MainUI_Load(System::Object^  sender, System::EventArgs^  e) {
-		this->settings = gcnew SettingsUI(titleMusic);
-		startTitleMusic();
+		this->settings = gcnew SettingsUI(music);
+		startMusic();
 	}
 	private: System::Void buttonSettings2_Click(System::Object^  sender, System::EventArgs^  e) {
 		showTitleScreen();

@@ -38,7 +38,8 @@ namespace Constants
 	const int DEFAULT_MONSTER_ATTACK = 2;
 
 	const std::string LOGS_PATHWAY = "Resources\\logs.txt";
-	const std::string MUSIC_PATHWAY = "Resources\\RPG_Title_1.wav";
+	const std::string TITLE_MUSIC_PATHWAY = "Resources\\Title_Music.wav";
+	const std::string BATTLE_MUSIC_PATHWAY = "Resources\\Battle_Music.wav";
 
 };
 
