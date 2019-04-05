@@ -39,7 +39,8 @@ dynamics and provide an easy-to-extend preliminary release of the game.
 ## Credits
 
 Music from:
- - https://opengameart.org/content/rpg-title-1
+ - Title Music: https://opengameart.org/content/rpg-title-1
+ - Battle Music: https://opengameart.org/content/rpg-battle-theme-ii
  
 Art from:
-- https://opengameart.org/content/fantasy-icon-pack-by-ravenmore-0
+- Icons: https://opengameart.org/content/fantasy-icon-pack-by-ravenmore-0
